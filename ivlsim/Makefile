@@ -19,15 +19,25 @@ include $(sim_dir)/Makefrag-iverilog
 
 rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
 
+# Block device include 64bit interface which is not directly support by VPI
+ivlsim_vsrcs = \
+	$(testchip_dir)/vsrc/SimSerial.v \
+	#$(testchip_dir)/vsrc/SimBlockDevice.v \
+
+ivlsim_csrcs = \
+	$(testchip_dir)/csrc/SimSerial.cc \
+	#$(testchip_dir)/csrc/SimBlockDevice.cc \
+	#$(testchip_dir)/csrc/blkdev.cc \
+
 sim_vsrcs = \
 	$(build_dir)/$(PROJECT).$(MODEL).$(CONFIG).v \
 	$(rocketchip_vsrc_dir)/TestDriver.v \
 	$(rocketchip_vsrc_dir)/AsyncResetReg.v \
 	$(rocketchip_vsrc_dir)/plusarg_reader.v \
-	$(testchip_vsrcs)
+	$(ivlsim_vsrcs)
 
 sim_csrcs = \
-	$(testchip_csrcs)
+	$(ivlsim_csrcs)
 
 CXX = g++
 

@@ -29,39 +29,3 @@ iverilog/$(IVL_VERSION).tar.gz:
 
 iverilog: $(INSTALLED_IVL)
 
-
-#--------------------------------------------------------------------
-# Build the simulator
-#--------------------------------------------------------------------
-
-
-
-#--------------------------------------------------------------------
-# Run
-#--------------------------------------------------------------------
-.PRECIOUS: $(output_dir)/%.fst
-
-$(output_dir)/%.run: $(output_dir)/% $(simv)
-	cd $(sim_dir) && $(exec_simv) +permissive +max-cycles=$(timeout_cycles) +permissive-off $< 2> /dev/null 2> $@ && [ $$PIPESTATUS -eq 0 ]
-
-$(output_dir)/%.out: $(output_dir)/% $(simv)
-	cd $(sim_dir) && $(exec_simv) +permissive +verbose +max-cycles=$(timeout_cycles) +permissive-off $< $(disasm) $@ && [ $$PIPESTATUS -eq 0 ]
-
-$(output_dir)/%.vcd: $(output_dir)/% $(simv_debug)
-	cd $(sim_dir) && $(exec_simv_debug) +permissive +verbose +vcdfile=$@ +max-cycles=$(timeout_cycles) +permissive-off $< $(disasm) $(patsubst %.vcd,%.out,$@) && [ $$PIPESTATUS -eq 0 ]
-
-$(output_dir)/%.fst: $(output_dir)/% $(simv_debug)
-	cd $(sim_dir) && $(exec_simv_debug) +permissive +verbose +vcdfile=$@ +max-cycles=$(timeout_cycles) +permissive-off $< -fst $(disasm) $(patsubst %.fst,%.out,$@) && [ $$PIPESTATUS -eq 0 ]
-
-$(output_dir)/%.saif: $(output_dir)/% $(simv_debug)
-	cd $(sim_dir) && rm -f $(output_dir)/pipe-$*.vcd && vcd2saif -input $(output_dir)/pipe-$*.vcd -pipe "$(exec_simv_debug) +permissive +verbose +vcdfile=$(output_dir)/pipe-$*.vcd +max-cycles=$(bmark_timeout_cycles) +permissive-off $<" -output $@ > $(patsubst %.saif,%.out,$@) 2>&1
-
-run: run-asm-tests run-bmark-tests
-run-debug: run-asm-tests-debug run-bmark-tests-debug
-run-fast: run-asm-tests-fast run-bmark-tests-fast
-
-.PHONY: run-asm-tests run-bmark-tests
-.PHONY: run-asm-tests-debug run-bmark-tests-debug
-.PHONY: run run-debug run-fast
-
-junk += $(output_dir)

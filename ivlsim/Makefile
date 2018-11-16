@@ -25,6 +25,7 @@ ivlsim_vsrcs = \
 	#$(testchip_dir)/vsrc/SimBlockDevice.v \
 
 ivlsim_csrcs = \
+	$(testchip_dir)/csrc/vpi_register.cc \
 	$(testchip_dir)/csrc/SimSerial.cc \
 	#$(testchip_dir)/csrc/SimBlockDevice.cc \
 	#$(testchip_dir)/csrc/blkdev.cc \
@@ -60,7 +61,7 @@ IVL_OPTS = \
 	-g2005-sv \
     -c timescale \
     -s $(TB) \
-    -y $(generated_dir) -Y .v \
+    -y $(build_dir) -Y .v \
     -m$(abspath $(simv).vpi) \
 	-DCLOCK_PERIOD=1.0 \
 	-DPRINTF_COND=$(TB).printf_cond \
@@ -83,7 +84,7 @@ $(simv_debug) : $(sim_vsrcs) $(sim_csrcs) $(INSTALLED_IVL)
     $(CXX) $(CXX_OPTS) $(sim_csrcs) -o $(simv).vpi && \
 	$(IVL) $(IVL_OPTS) -o $(simv_debug) $(sim_vsrcs) -DDEBUG \
 
-exec_simv = $(VVP) -M. -msimv-$(PROJECT)-$(CONFIG) $(simv) 
+exec_simv = $(VVP) -M. -msimv-$(PROJECT)-$(CONFIG) $(simv)
 exec_simv_debug = $(VVP) -v -M. -msimv-$(PROJECT)-$(CONFIG) $(simv_debug)
 
 $(output_dir)/%.out: $(output_dir)/% $(simv)

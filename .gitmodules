@@ -4,3 +4,6 @@
 [submodule "testchipip"]
 	path = testchipip
 	url = https://github.com/jimmysitu/testchipip.git
+[submodule "fpga-shells"]
+	path = fpga-shells
+	url = https://github.com/jimmysitu/fpga-shells.git

@@ -1,7 +1,8 @@
 # jmRocket TODO
-* iVerilog simulation environment
+* iVerilog simulation environment, done
 * FPGA compose flow
-  * FPGA default configure
+  * take freedom fpga flow as reference
+  * FPGA default configure for rocket chip
   * RTL simulation environmet
 * ASIC compose flow
   * ASIC default configure

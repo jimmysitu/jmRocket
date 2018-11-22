@@ -6,7 +6,7 @@ MODEL := ExampleFPGATop
 PROJECT := example
 export CONFIG_PROJECT ?= $(PROJECT)
 export CONFIG ?= DefaultExampleFPGAConfig
-export BOARD ?= default
+export BOARD ?= miz701n
 export BOOTROM_DIR ?= $(base_dir)/bootrom/xip
 
 rocketchip_dir := $(base_dir)/rocket-chip

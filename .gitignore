@@ -1,6 +1,12 @@
 /Makefrag.pkgs
 target
+builds
+project
 *.jar
 *.stamp
+.exvim.*
 /vsim
 /verisim
+/ivlsim
+
+# sbt directories

@@ -15,8 +15,9 @@ folder_filter_mode = exclude -- { include, exclude }
 folder_filter += chisel3,firrtl,emulator,hardfloat,lib
 folder_filter += macros,project,regression,riscv-tools,scripts,target,torture
 folder_filter += verilator-*
-folder_filter += generated-src -- It seem exvim has some issue for reading generated code
+folder_filter += generated-src,builds -- It seem exvim has some issue for reading generated code
 file_filter += scala,cc,hh,c,h,v
+file_filter += __EMPTY__,mk,md
 file_ignore_pattern += *.o,*.d
 
 -- Editing:

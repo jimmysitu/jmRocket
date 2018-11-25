@@ -5,6 +5,7 @@
 #include "verilated_vcd_c.h"
 #endif
 #include <fesvr/tsi.h>
+#include "remote_bitbang.h"
 #include <iostream>
 #include <fcntl.h>
 #include <signal.h>
@@ -13,6 +14,8 @@
 #include <unistd.h>
 
 extern tsi_t* tsi;
+extern remote_bitbang_t * jtag;
+
 static uint64_t trace_count = 0;
 bool verbose;
 bool done_reset;
@@ -61,6 +64,8 @@ int main(int argc, char** argv)
   int ret = 0;
   FILE *vcdfile = NULL;
   bool print_cycles = false;
+  // Port numbers are 16 bit unsigned integers. 
+  uint16_t rbb_port = 0;
   char *new_argv[argc];
   int new_argc;
 
@@ -81,6 +86,8 @@ int main(int argc, char** argv)
       start = atoll(argv[i]+7);
     else if (arg.substr(0, 12) == "+cycle-count")
       print_cycles = true;
+    else if (arg.substr(0, 10) == "+rbb_port=")
+      rbb_port = atoll(argv[i]+10);
   }
 
   if (verbose)
@@ -103,6 +110,8 @@ int main(int argc, char** argv)
   }
 #endif
 
+  jtag = new remote_bitbang_t(rbb_port);
+
   new_argc = copy_argv(argc, argv, new_argv);
   tsi = new tsi_t(new_argc, new_argv);
 
@@ -119,7 +128,7 @@ int main(int argc, char** argv)
   }
   done_reset = true;
 
-  while (!tsi->done() && !tile->io_success && trace_count < max_cycles) {
+  while (!tsi->done() && !jtag->done() && !tile->io_success && trace_count < max_cycles) {
     tile->clock = 0;
     tile->eval();
 #if VM_TRACE
@@ -147,8 +156,13 @@ int main(int argc, char** argv)
 
   if (tsi->exit_code())
   {
-    fprintf(stderr, "*** FAILED *** (code = %d, seed %d) after %ld cycles\n", tsi->exit_code(), random_seed, trace_count);
+    fprintf(stderr, "*** FAILED *** via tsi (code = %d, seed %d) after %ld cycles\n", tsi->exit_code(), random_seed, trace_count);
     ret = tsi->exit_code();
+  }
+  else if (jtag->exit_code())
+  {
+    fprintf(stderr, "*** FAILED *** via jtag (code = %d, seed %d) after %ld cycles\n", jtag->exit_code(), random_seed, trace_count);
+    ret = jtag->exit_code();
   }
   else if (trace_count == max_cycles)
   {
@@ -160,8 +174,8 @@ int main(int argc, char** argv)
     fprintf(stderr, "Completed after %ld cycles\n", trace_count);
   }
 
-  delete tsi;
-  delete tile;
+  if (jtag) delete jtag;
+  if (tile) delete tile;
 
   return ret;
 }

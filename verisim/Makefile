@@ -23,6 +23,7 @@ include $(sim_dir)/Makefrag-verilator
 long_name = $(PROJECT).$(MODEL).$(CONFIG)
 
 rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
+rocketchip_csrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/csrc
 
 sim_vsrcs = \
 	$(build_dir)/$(long_name).v \
@@ -32,6 +33,9 @@ sim_vsrcs = \
 
 sim_csrcs = \
 	$(sim_dir)/csrc/verilator-harness.cc \
+	$(rocketchip_csrc_dir)/SimJTAG.cc \
+	$(rocketchip_csrc_dir)/SimDTM.cc \
+	$(rocketchip_csrc_dir)/remote_bitbang.cc \
 	$(testchip_csrcs)
 
 model_dir = $(build_dir)/$(long_name)
@@ -48,7 +52,7 @@ $(model_mk): $(sim_vsrcs) $(INSTALLED_VERILATOR)
 	mkdir -p $(build_dir)/$(long_name)
 	$(VERILATOR) $(VERILATOR_FLAGS) -Mdir $(build_dir)/$(long_name) \
 	-o $(sim) $< $(sim_csrcs) -LDFLAGS "$(LDFLAGS)" \
-	-CFLAGS "-I$(build_dir) -include $(model_header)"
+	-CFLAGS "-I$(build_dir) -I$(rocketchip_csrc_dir) -include $(model_header)"
 	touch $@
 
 $(sim): $(model_mk) $(sim_csrcs)
@@ -59,7 +63,7 @@ $(model_mk_debug): $(sim_vsrcs) $(INSTALLED_VERILATOR)
 	mkdir -p $(build_dir)/$(long_name).debug
 	$(VERILATOR) $(VERILATOR_FLAGS) -Mdir $(build_dir)/$(long_name).debug --trace \
 	-o $(sim_debug) $< $(sim_csrcs) -LDFLAGS "$(LDFLAGS)" \
-	-CFLAGS "-I$(build_dir) -include $(model_header_debug)"
+	-CFLAGS "-I$(build_dir) -I$(rocketchip_csrc_dir) -include $(model_header_debug)"
 	touch $@
 
 $(sim_debug): $(model_mk_debug) $(sim_csrcs)

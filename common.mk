@@ -12,7 +12,7 @@
 # - EXTRA_FPGA_VSRCS
 
 # export to bootloader
-export ROMCONF=$(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).rom.conf
+export ROMCONF=$(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).rom.conf
 
 # export to fpga-shells
 export FPGA_TOP_SYSTEM=$(MODEL)
@@ -38,22 +38,21 @@ $(FIRRTL_JAR): $(shell find $(rocketchip_dir)/firrtl/src/main/scala -iname "*.sc
 	$(MAKE) -C $(rocketchip_dir)/firrtl SBT="$(SBT)" root_dir=$(rocketchip_dir)/firrtl build-scala
 	touch $(FIRRTL_JAR)
 	mkdir -p $(rocketchip_dir)/lib
-	cp -p $(FIRRTL_JAR) rocket-chip/lib
+	cp -p $(FIRRTL_JAR) $(rocketchip_dir)/lib
 	mkdir -p $(rocketchip_dir)/chisel3/lib
 	cp -p $(FIRRTL_JAR) $(rocketchip_dir)/chisel3/lib
 
 # Build .fir
-firrtl := $(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).fir
+firrtl := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).fir
 $(firrtl): $(shell find $(base_dir)/src/main/scala -name '*.scala') $(FIRRTL_JAR)
 	mkdir -p $(dir $@)
-	#$(SBT) "runMain $(PROJECT).Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
-	$(SBT) "runMain freechips.rocketchip.system.Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
+	$(SBT) "runMain $(PROJECT).Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
 
 .PHONY: firrtl
 firrtl: $(firrtl)
 
 # Build .v
-verilog := $(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).v
+verilog := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).v
 $(verilog): $(firrtl) $(FIRRTL_JAR)
 	$(FIRRTL) -i $(firrtl) -o $@ -X verilog
 ifneq ($(PATCHVERILOG),"")
@@ -63,7 +62,7 @@ endif
 .PHONY: verilog
 verilog: $(verilog)
 
-romgen := $(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).rom.v
+romgen := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).rom.v
 $(romgen): $(verilog)
 ifneq ($(BOOTROM_DIR),"")
 	$(MAKE) -C $(BOOTROM_DIR) romgen
@@ -73,7 +72,7 @@ endif
 .PHONY: romgen
 romgen: $(romgen)
 
-f := $(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).vsrcs.F
+f := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).vsrcs.F
 $(f):
 	echo $(VSRCS) > $@
 

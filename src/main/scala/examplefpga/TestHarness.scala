@@ -16,7 +16,7 @@ class TestHarness(implicit val p: Parameters) extends Module {
   val success = Wire(Bool())
 
   val dut = p(BuildTop)(clock, reset.toBool, p)
-  dut.reset := reset | dut.debug.ndreset
+  dut.reset := reset.toBool || dut.debug.ndreset
 
   Debug.connectDebug(dut.debug, clock, reset.toBool, success)
   dut.connectSimAXIMem()

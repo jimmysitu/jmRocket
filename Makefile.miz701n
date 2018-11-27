@@ -3,9 +3,9 @@ base_dir := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 BUILD_DIR := $(base_dir)/builds/miz701n
 FPGA_DIR := $(base_dir)/fpga-shells/xilinx
 MODEL := ExampleFPGATop
-PROJECT := example
+PROJECT := examplefpga
 export CONFIG_PROJECT ?= $(PROJECT)
-export CONFIG ?= DefaultExampleFPGAConfig
+export CONFIG ?= DefaultExampleConfig
 export BOARD ?= miz701n
 export BOOTROM_DIR ?= $(base_dir)/bootrom/xip
 

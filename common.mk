@@ -46,7 +46,8 @@ $(FIRRTL_JAR): $(shell find $(rocketchip_dir)/firrtl/src/main/scala -iname "*.sc
 firrtl := $(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).fir
 $(firrtl): $(shell find $(base_dir)/src/main/scala -name '*.scala') $(FIRRTL_JAR)
 	mkdir -p $(dir $@)
-	$(SBT) "runMain $(PROJECT).Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
+	#$(SBT) "runMain $(PROJECT).Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
+	$(SBT) "runMain freechips.rocketchip.system.Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
 
 .PHONY: firrtl
 firrtl: $(firrtl)
@@ -76,6 +77,9 @@ f := $(BUILD_DIR)/$(CONFIG_PROJECT).$(CONFIG).vsrcs.F
 $(f):
 	echo $(VSRCS) > $@
 
+.PHONY: f
+f:$(f)
+
 bit := $(BUILD_DIR)/obj/$(MODEL).bit
 $(bit): $(romgen) $(f)
 	cd $(BUILD_DIR); vivado \
@@ -91,7 +95,6 @@ $(bit): $(romgen) $(f)
 bit: $(bit)
 
 # Build .mcs
-# FIXME: $(BOARD) depend on real fpga boad, which cannot be set as a default
 mcs := $(BUILD_DIR)/obj/$(MODEL).mcs
 $(mcs): $(bit)
 	cd $(BUILD_DIR); vivado -nojournal -mode batch -source $(fpga_common_script_dir)/write_cfgmem.tcl -tclargs $(BOARD) $@ $<

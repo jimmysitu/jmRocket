@@ -18,8 +18,20 @@ include $(base_dir)/Makefrag
 include $(sim_dir)/Makefrag-iverilog
 
 rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
+rocketchip_csrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/csrc
 
+ifeq ($(PROJECT), examplefpga)
+ivlsim_vsrcs = \
+	$(rocketchip_vsrc_dir)/SimJTAG.v \
+
+ivlsim_csrcs = \
+	$(rocketchip_csrc_dir)/vpi_register.cc \
+	$(rocketchip_csrc_dir)/SimJTAG.cc \
+	$(rocketchip_csrc_dir)/remote_bitbang.cc \
+
+else
 # Block device include 64bit interface which is not directly support by VPI
+# So block device simulation is not support by ivlsim for now
 ivlsim_vsrcs = \
 	$(testchip_dir)/vsrc/SimSerial.v \
 	#$(testchip_dir)/vsrc/SimBlockDevice.v \
@@ -29,6 +41,8 @@ ivlsim_csrcs = \
 	$(testchip_dir)/csrc/SimSerial.cc \
 	#$(testchip_dir)/csrc/SimBlockDevice.cc \
 	#$(testchip_dir)/csrc/blkdev.cc \
+
+endif
 
 sim_vsrcs = \
 	$(build_dir)/$(PROJECT).$(MODEL).$(CONFIG).v \

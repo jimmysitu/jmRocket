@@ -87,7 +87,7 @@ run-regression-tests-fast: $(addprefix $(output_dir)/,$(addsuffix .run,$(regress
 
 run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .vpd,$(regression-tests)))
 
-run-jtag-dtm-tests-64:
+run-jtag-dtm-tests-64: $(sim)
 	RISCV=$(RISCV) $(GDBSERVER) \
 	--sim_cmd="$(sim) $(JTAG_DTM_SIM_ARGS) dummybin" \
 	--server_cmd="$(RISCV)/bin/openocd \
@@ -96,7 +96,7 @@ run-jtag-dtm-tests-64:
 	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
 	$(JTAG_DTM_TEST)
 
-run-jtag-dtm-tests-64-debug:
+run-jtag-dtm-tests-64-debug: $(sim_debug)
 	RISCV=$(RISCV) $(GDBSERVER) \
 	--sim_cmd="$(sim_debug) $(JTAG_DTM_SIM_ARGS) $(VERISIM_JTAG_VCDPLUS_64) dummybin" \
 	--server_cmd="$(RISCV)/bin/openocd $(OPENOCD_DEBUG) \

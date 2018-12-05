@@ -1,0 +1,22 @@
+# If this is defined empty, then all tests would run.
+JTAG_DTM_TEST ?= MemTest64
+GDBSERVER = $(abspath $(ROCKETCHIP_DIR))/riscv-tools/riscv-tests/debug/gdbserver.py \
+	    --print-failures \
+	    --print-log-names
+
+ifdef DEBUG
+VSIM_JTAG_VCDPLUS_32= +vcdplusfile=sim32.vcd
+VSIM_JTAG_VCDPLUS_64= +vcdplusfile=sim64.vcd
+IVLSIM_JTAG_VCDPLUS_32= +vcdfile=sim32.vcd
+IVLSIM_JTAG_VCDPLUS_64= +vcdfile=sim64.vcd
+VERISIM_JTAG_VCDPLUS_32= -v sim32.vcd
+VERISIM_JTAG_VCDPLUS_64= -v sim64.vcd
+OPENOCD_DEBUG= -d
+endif
+
+ifdef SEED
+SEED_ARG = --seed $(SEED)
+endif
+
+JTAG_DTM_SIM_ARGS = +verbose +jtag_rbb_enable=1 $(SEED_ARG)
+

@@ -12,8 +12,7 @@ class ExampleFPGATop(implicit p: Parameters) extends RocketSubsystem
     with CanHaveMasterAXI4MemPort
     with HasPeripheryBootROM
     with HasSyncExtInterrupts
-    with HasPeripheryDebug
-    with HasPeripherySerial {
+    with HasPeripheryDebug {
   override lazy val module = new ExampleFPGATopModule(this)
 }
 
@@ -23,6 +22,5 @@ class ExampleFPGATopModule[+L <: ExampleFPGATop](l: L) extends RocketSubsystemMo
     with HasPeripheryBootROMModuleImp
     with HasExtInterruptsModuleImp
     with HasPeripheryDebugModuleImp
-    with HasPeripherySerialModuleImp
     with DontTouch
 

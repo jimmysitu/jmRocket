@@ -18,6 +18,7 @@ CXXFLAGS := $(CXXFLAGS) -O1 -std=c++11 -I$(RISCV)/include -D__STDC_FORMAT_MACROS
 LDFLAGS := $(LDFLAGS) -L$(RISCV)/lib -Wl,-rpath,$(RISCV)/lib -L$(sim_dir) -lfesvr -lpthread
 
 include $(base_dir)/Makefrag
+include $(base_dir)/Makefrag-jtag
 include $(sim_dir)/Makefrag-verilator
 
 long_name = $(PROJECT).$(MODEL).$(CONFIG)
@@ -85,6 +86,24 @@ run-regression-tests: $(addprefix $(output_dir)/,$(addsuffix .out,$(regression-t
 run-regression-tests-fast: $(addprefix $(output_dir)/,$(addsuffix .run,$(regression-tests)))
 
 run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .vpd,$(regression-tests)))
+
+run-jtag-dtm-tests-64:
+	RISCV=$(RISCV) $(GDBSERVER) \
+	--sim_cmd="$(sim) $(JTAG_DTM_SIM_ARGS) dummybin" \
+	--server_cmd="$(RISCV)/bin/openocd \
+	-s $(RISCV)/share/openocd/scripts" \
+	--64 \
+	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
+	$(JTAG_DTM_TEST)
+
+run-jtag-dtm-tests-64-debug:
+	RISCV=$(RISCV) $(GDBSERVER) \
+	--sim_cmd="$(sim_debug) $(JTAG_DTM_SIM_ARGS) $(VERISIM_JTAG_VCDPLUS_64) dummybin" \
+	--server_cmd="$(RISCV)/bin/openocd $(OPENOCD_DEBUG) \
+	-s $(RISCV)/share/openocd/scripts" \
+	--64 \
+	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
+	$(JTAG_DTM_TEST)
 
 clean:
 	rm -rf generated-src ./simulator-*

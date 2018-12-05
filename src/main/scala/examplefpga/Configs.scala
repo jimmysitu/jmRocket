@@ -23,6 +23,11 @@ class WithExampleFPGATop extends Config((site, here, up) => {
   case BuildTop => (clock: Clock, reset: Bool, p: Parameters) => {
     Module(LazyModule(new ExampleFPGATop()(p)).module)
   }
+  case JtagDTMKey => new JtagDTMConfig (
+    idcodeVersion = 2,
+    idcodePartNum = 0x000,
+    idcodeManufId = 0x489,
+    debugIdleCycles = 5)
 })
 
 class BaseExampleConfig extends Config(

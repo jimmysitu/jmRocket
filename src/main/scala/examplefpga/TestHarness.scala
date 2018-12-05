@@ -13,16 +13,13 @@ class TestHarness(implicit val p: Parameters) extends Module {
     val success = Output(Bool())
   })
 
-  val success = Wire(Bool())
-
   val dut = p(BuildTop)(clock, reset.toBool, p)
   dut.reset := reset.toBool || dut.debug.ndreset
 
-  Debug.connectDebug(dut.debug, clock, reset.toBool, success)
+  Debug.connectDebug(dut.debug, clock, reset.toBool, io.success)
   dut.connectSimAXIMem()
   dut.dontTouchPorts()
   dut.tieOffInterrupts()
-  io.success := dut.connectSimSerial() || success
 }
 
 object Generator extends GeneratorApp {

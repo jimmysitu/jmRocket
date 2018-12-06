@@ -6,10 +6,10 @@ GDBSERVER = $(abspath $(ROCKETCHIP_DIR))/riscv-tools/riscv-tests/debug/gdbserver
 
 export JTAG_DTM_ENABLE_SBA ?= off
 
-VSIM_JTAG_VCDPLUS_32= +vcdplusfile=sim32.vcd
-VSIM_JTAG_VCDPLUS_64= +vcdplusfile=sim64.vcd
-IVLSIM_JTAG_VCDPLUS_32= +vcdfile=sim32.vcd
-IVLSIM_JTAG_VCDPLUS_64= +vcdfile=sim64.vcd
+VSIM_JTAG_VCDPLUS_32= +vcdplusfile=sim32.vdp
+VSIM_JTAG_VCDPLUS_64= +vcdplusfile=sim64.vdp
+IVLSIM_JTAG_VCDPLUS_32= -fst +vcdfile=sim32.fst
+IVLSIM_JTAG_VCDPLUS_64= -fst +vcdfile=sim64.fst
 VERISIM_JTAG_VCDPLUS_32= -v sim32.vcd
 VERISIM_JTAG_VCDPLUS_64= -v sim64.vcd
 OPENOCD_DEBUG= -d

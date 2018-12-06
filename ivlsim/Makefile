@@ -15,6 +15,7 @@ default: $(simv)
 debug: $(simv_debug)
 
 include $(base_dir)/Makefrag
+include $(base_dir)/Makefrag-jtag
 include $(sim_dir)/Makefrag-iverilog
 
 rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
@@ -23,10 +24,12 @@ rocketchip_csrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/csrc
 ifeq ($(PROJECT), examplefpga)
 ivlsim_vsrcs = \
 	$(rocketchip_vsrc_dir)/SimJTAG.v \
+	$(rocketchip_vsrc_dir)/SimDTM.v \
 
 ivlsim_csrcs = \
 	$(rocketchip_csrc_dir)/vpi_register.cc \
 	$(rocketchip_csrc_dir)/SimJTAG.cc \
+	$(rocketchip_csrc_dir)/SimDTM.cc \
 	$(rocketchip_csrc_dir)/remote_bitbang.cc \
 
 else
@@ -115,6 +118,27 @@ run-regression-tests: $(addprefix $(output_dir)/,$(addsuffix .out,$(regression-t
 run-regression-tests-fast: $(addprefix $(output_dir)/,$(addsuffix .run,$(regression-tests)))
 
 run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .fst,$(regression-tests)))
+
+ifeq ($(PROJECT), examplefpga)
+run-jtag-dtm-tests-64: $(simv)
+	RISCV=$(RISCV) $(GDBSERVER) \
+	--sim_cmd="$(exec_simv) $(JTAG_DTM_SIM_ARGS) dummybin" \
+	--server_cmd="$(RISCV)/bin/openocd \
+	-s $(RISCV)/share/openocd/scripts" \
+	--64 \
+	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
+	$(JTAG_DTM_TEST)
+
+run-jtag-dtm-tests-64-debug: $(simv_debug)
+	RISCV=$(RISCV) $(GDBSERVER) \
+	--sim_cmd="$(exec_simv_debug) $(JTAG_DTM_SIM_ARGS) $(IVLSIM_JTAG_VCDPLUS_64) dummybin" \
+	--server_cmd="$(RISCV)/bin/openocd $(OPENOCD_DEBUG) \
+	-s $(RISCV)/share/openocd/scripts" \
+	--64 \
+	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
+	$(JTAG_DTM_TEST)
+
+endif
 
 clean:
 	rm -rf generated-src csrc simv-*

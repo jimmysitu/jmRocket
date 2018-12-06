@@ -87,6 +87,7 @@ run-regression-tests-fast: $(addprefix $(output_dir)/,$(addsuffix .run,$(regress
 
 run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .vpd,$(regression-tests)))
 
+ifeq ($(PROJECT), examplefpga)
 run-jtag-dtm-tests-64: $(sim)
 	RISCV=$(RISCV) $(GDBSERVER) \
 	--sim_cmd="$(sim) $(JTAG_DTM_SIM_ARGS) dummybin" \
@@ -104,6 +105,8 @@ run-jtag-dtm-tests-64-debug: $(sim_debug)
 	--64 \
 	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
 	$(JTAG_DTM_TEST)
+
+endif
 
 clean:
 	rm -rf generated-src ./simulator-*

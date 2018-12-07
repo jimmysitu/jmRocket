@@ -13,9 +13,17 @@ lazy val commonSettings = Seq(
     Resolver.sonatypeRepo("releases"),
     Resolver.mavenLocal))
 
-lazy val rocketchip = RootProject(file("rocket-chip"))
+lazy val rocketChip = RootProject(file("rocket-chip"))
 
-lazy val testchipip = project.settings(commonSettings).dependsOn(rocketchip)
+lazy val testchipip = (project in file("testchipip")).
+  settings(commonSettings:_*).
+  dependsOn(rocketChip)
 
-lazy val default = (project in file(".")).settings(commonSettings).dependsOn(testchipip)
+lazy val sifiveBlocks = (project in file("sifive-blocks")).
+  settings(commonSettings:_*).
+  dependsOn(rocketChip)
+
+lazy val default = (project in file(".")).
+  settings(commonSettings:_*).
+  dependsOn(testchipip, sifiveBlocks)
 

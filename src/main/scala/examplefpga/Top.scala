@@ -8,10 +8,13 @@ import freechips.rocketchip.devices.tilelink._
 import freechips.rocketchip.util.DontTouch
 import testchipip._
 
+import sifive.blocks.devices.gpio._
+
 class ExampleFPGATop(implicit p: Parameters) extends RocketSubsystem
     with CanHaveMasterAXI4MemPort
     with HasPeripheryBootROM
     with HasSyncExtInterrupts
+    with HasPeripheryGPIO
     with HasPeripheryDebug {
   override lazy val module = new ExampleFPGATopModule(this)
 }
@@ -21,6 +24,7 @@ class ExampleFPGATopModule[+L <: ExampleFPGATop](l: L) extends RocketSubsystemMo
     with CanHaveMasterAXI4MemPortModuleImp
     with HasPeripheryBootROMModuleImp
     with HasExtInterruptsModuleImp
+    with HasPeripheryGPIO
     with HasPeripheryDebugModuleImp
     with DontTouch
 

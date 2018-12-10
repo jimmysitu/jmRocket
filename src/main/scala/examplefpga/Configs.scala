@@ -9,6 +9,8 @@ import freechips.rocketchip.devices.debug._
 import freechips.rocketchip.tile.XLen
 import testchipip._
 
+import sifive.blocks.devices.gpio._
+
 class WithBootROM extends Config((site, here, up) => {
   case BootROMParams => BootROMParams(
     contentFileName = s"./testchipip/bootrom/bootrom.rv${site(XLen)}.img")
@@ -28,6 +30,9 @@ class WithExampleFPGATop extends Config((site, here, up) => {
     idcodePartNum = 0x000,
     idcodeManufId = 0x489,
     debugIdleCycles = 5)
+  case PeripheryGPIOKey => List(
+    //GPIOParams(address = 0x10012000, width = 32, includeIOF = true))
+    GPIOParams(address = 0x10012000, width = 32, includeIOF = false))
 })
 
 class BaseExampleConfig extends Config(

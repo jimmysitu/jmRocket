@@ -24,7 +24,7 @@ class ExampleFPGATopModule[+L <: ExampleFPGATop](l: L) extends RocketSubsystemMo
     with CanHaveMasterAXI4MemPortModuleImp
     with HasPeripheryBootROMModuleImp
     with HasExtInterruptsModuleImp
-    with HasPeripheryGPIO
+    with HasPeripheryGPIOModuleImp
     with HasPeripheryDebugModuleImp
     with DontTouch
 

@@ -31,8 +31,7 @@ class WithExampleFPGATop extends Config((site, here, up) => {
     idcodeManufId = 0x489,
     debugIdleCycles = 5)
   case PeripheryGPIOKey => List(
-    //GPIOParams(address = 0x10012000, width = 32, includeIOF = true))
-    GPIOParams(address = 0x10012000, width = 32, includeIOF = false))
+    GPIOParams(address = 0x10012000, width = 2, includeIOF = false))
 })
 
 class BaseExampleConfig extends Config(

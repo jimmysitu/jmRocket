@@ -94,7 +94,7 @@ run-jtag-dtm-tests-64: $(sim)
 	--server_cmd="$(RISCV)/bin/openocd \
 	-s $(RISCV)/share/openocd/scripts" \
 	--64 \
-	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
+	$(base_dir)/tests/examplefpga.py \
 	$(JTAG_DTM_TEST)
 
 run-jtag-dtm-tests-64-debug: $(sim_debug)
@@ -103,7 +103,7 @@ run-jtag-dtm-tests-64-debug: $(sim_debug)
 	--server_cmd="$(RISCV)/bin/openocd $(OPENOCD_DEBUG) \
 	-s $(RISCV)/share/openocd/scripts" \
 	--64 \
-	$(abspath $(ROCKETCHIP_DIR))/scripts/RocketSim64.py \
+	$(base_dir)/tests/examplefpga.py \
 	$(JTAG_DTM_TEST)
 
 endif

@@ -18,9 +18,10 @@ class TestHarness(implicit val p: Parameters) extends Module {
 
   Debug.connectDebug(dut.debug, clock, reset.toBool, io.success)
   dut.connectSimAXIMem()
+  dut.connectSimAXIMMIO()
   dut.dontTouchPorts()
   dut.tieOffInterrupts()
-  dut.gpio(0).pins.map { (pin) => pin.i.ival := Bool(false)}
+  dut.gpio(0).pins.map { (pin) => pin.i.ival := false.B}
 }
 
 object Generator extends GeneratorApp {

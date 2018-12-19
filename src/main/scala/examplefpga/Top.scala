@@ -12,6 +12,7 @@ import sifive.blocks.devices.gpio._
 
 class ExampleFPGATop(implicit p: Parameters) extends RocketSubsystem
     with CanHaveMasterAXI4MemPort
+    with CanHaveMasterAXI4MMIOPort
     with HasPeripheryBootROM
     with HasSyncExtInterrupts
     with HasPeripheryGPIO
@@ -23,6 +24,7 @@ class ExampleFPGATop(implicit p: Parameters) extends RocketSubsystem
 class ExampleFPGATopModule[+L <: ExampleFPGATop](l: L) extends RocketSubsystemModuleImp(l)
     with HasRTCModuleImp
     with CanHaveMasterAXI4MemPortModuleImp
+    with CanHaveMasterAXI4MMIOPortModuleImp
     with HasPeripheryBootROMModuleImp
     with HasExtInterruptsModuleImp
     with HasPeripheryGPIOModuleImp

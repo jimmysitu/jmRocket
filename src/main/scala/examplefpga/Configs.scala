@@ -20,13 +20,13 @@ class WithBootROM extends Config((site, here, up) => {
 })
 
 object ConfigValName {
-  implicit val valName = ValName("TestHarness")
+  implicit val valName = ValName("ExampleFPGAChip")
 }
 import ConfigValName._
 
-class WithExampleFPGATop extends Config((site, here, up) => {
+class WithExampleFPGASystem extends Config((site, here, up) => {
   case BuildTop => (clock: Clock, reset: Bool, p: Parameters) => {
-    Module(LazyModule(new ExampleFPGATop()(p)).module)
+    Module(LazyModule(new ExampleFPGASystem()(p)).module)
   }
   case JtagDTMKey => new JtagDTMConfig (
     idcodeVersion = 2,
@@ -34,7 +34,8 @@ class WithExampleFPGATop extends Config((site, here, up) => {
     idcodeManufId = 0x489,
     debugIdleCycles = 5)
   case PeripheryGPIOKey => List(
-    GPIOParams(address = 0x10012000, width = 2, includeIOF = false))
+    GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
+    GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
 })
 
 class With1Tiny64Core extends Config((site, here, up) => {
@@ -71,11 +72,12 @@ class BaseExampleConfig extends Config(
 
 class DefaultExampleConfig extends Config(
   new WithJtagDTM ++
-  new WithExampleFPGATop ++ new BaseExampleConfig)
+  new WithExampleFPGASystem ++ new BaseExampleConfig)
 
 class BaseTiny64Config extends Config(
   new WithBootROM ++
   new WithNoMemPort ++
+  new WithNoMMIOPort ++
   new WithNMemoryChannels(0) ++
   new WithNBanks(0) ++
   new With1Tiny64Core ++
@@ -83,5 +85,5 @@ class BaseTiny64Config extends Config(
 
 class Tiny64Config extends Config(
   new WithJtagDTM ++
-  new WithExampleFPGATop ++ new BaseTiny64Config)
+  new WithExampleFPGASystem ++ new BaseTiny64Config)
 

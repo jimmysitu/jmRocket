@@ -3,10 +3,7 @@ package examplefpga
 import chisel3._
 import freechips.rocketchip.diplomacy.LazyModule
 import freechips.rocketchip.config.{Field, Parameters}
-import freechips.rocketchip.util.GeneratorApp
 import freechips.rocketchip.devices.debug._
-
-case object BuildTop extends Field[(Clock, Bool, Parameters) => ExampleFPGATopModule[ExampleFPGATop]]
 
 class TestHarness(implicit val p: Parameters) extends Module {
   val io = IO(new Bundle {
@@ -21,11 +18,8 @@ class TestHarness(implicit val p: Parameters) extends Module {
   dut.connectSimAXIMMIO()
   dut.dontTouchPorts()
   dut.tieOffInterrupts()
-  dut.gpio(0).pins.map { (pin) => pin.i.ival := false.B}
+  dut.gpio.map {
+    (g) => g.pins.zipWithIndex.map { case(pin, i) => pin.i.ival := (i.U)(0)}
+  }
 }
 
-object Generator extends GeneratorApp {
-  val longName = names.topModuleProject + "." + names.topModuleClass + "." + names.configs
-  generateFirrtl
-  generateAnno
-}

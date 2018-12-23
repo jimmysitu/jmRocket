@@ -1,13 +1,12 @@
 # See LICENSE for license details.
 base_dir := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-BUILD_DIR := $(base_dir)/builds/miz701n
+BUILD_DIR := $(base_dir)/builds/default
 FPGA_DIR := $(base_dir)/fpga-shells/xilinx
 MODEL := ExampleFPGAPlatform
 PROJECT := examplefpga
 export CONFIG_PROJECT ?= $(PROJECT)
-#export CONFIG ?= DefaultExampleConfig
 export CONFIG ?= Tiny64Config
-export BOARD ?= miz701n
+export BOARD ?= default
 export BOOTROM_DIR ?= $(base_dir)/bootrom/xip
 
 rocketchip_dir := $(base_dir)/rocket-chip

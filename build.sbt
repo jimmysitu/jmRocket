@@ -23,7 +23,12 @@ lazy val sifiveBlocks = (project in file("sifive-blocks")).
   settings(commonSettings:_*).
   dependsOn(rocketChip)
 
+lazy val fpgaShells = (project in file("fpga-shells")).
+  settings(commonSettings:_*).
+  dependsOn(rocketChip, sifiveBlocks)
+
+
 lazy val default = (project in file(".")).
   settings(commonSettings:_*).
-  dependsOn(testchipip, sifiveBlocks)
+  dependsOn(testchipip, sifiveBlocks, fpgaShells)
 

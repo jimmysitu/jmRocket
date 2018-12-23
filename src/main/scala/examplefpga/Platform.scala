@@ -27,6 +27,9 @@ class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
     val btns = new GPIOPins(() => PinGen(), p(PeripheryGPIOKey)(0))
     val leds = new GPIOPins(() => PinGen(), p(PeripheryGPIOKey)(1))
   }
+  val jtag_reset = Input(Bool())
+  val ndreset = Input(Bool())
+  val extInterrupts = Input(UInt(p(NExtTopInterrupts).W))
 }
 
 // Example FPGA Platform
@@ -35,10 +38,19 @@ class ExampleFPGAPlatform(implicit val p: Parameters) extends Module {
   val sys = p(BuildTop)(clock, reset.toBool, p)
   val io = IO(new ExampleFPGAPlatformIO)
 
-  val sjtag = sys.debug.systemjtag.get
-  JTAGPinsFromPort(io.pins.jtag, sjtag.jtag)
+  // JTAG Debug Interface
+  val sys_jtag = sys.debug.systemjtag.get
+  JTAGPinsFromPort(io.pins.jtag, sys_jtag.jtag)
+  sys_jtag.reset := io.jtag_reset
+  sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
 
+  // Buttons Inputs
   GPIOPinsFromPort(io.pins.btns, sys.gpio(0))
+
+  // LEDs Outputs
   GPIOPinsFromPort(io.pins.leds, sys.gpio(1))
+
+  // External Interrupt
+  sys.interrupts := io.extInterrupts
 
 }

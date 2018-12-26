@@ -13,6 +13,8 @@ import sifive.blocks.devices.jtag._
 import sifive.blocks.devices.gpio._
 import sifive.blocks.devices.pinctrl._
 
+import sifive.fpgashells.shell._
+
 case object BuildPlatform extends Field[Parameters => ExampleFPGAPlatform]
 
 // PinGen
@@ -23,15 +25,14 @@ object PinGen {
   }
 }
 
+// Example FPGA Platform IO
 class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
-  val pins = new Bundle {
-    val jtag = new JTAGPins(() => PinGen(), false)
-    val btns = new GPIOPins(() => PinGen(), p(PeripheryGPIOKey)(0))
-    val leds = new GPIOPins(() => PinGen(), p(PeripheryGPIOKey)(1))
-  }
+  val jtag = p(IncludeJtagDTM).option(new FPGAJTAGIO)
+  val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
+  val leds = Ouptput(UInt(p(PeripheryGPIOKey)(1).width.W))
+  val ints = Input(UInt(p(NExtTopInterrupts).W))
   val jtag_reset = Input(Bool())
   val ndreset = Input(Bool())
-  val extInterrupts = Input(UInt(p(NExtTopInterrupts).W))
 }
 
 // Example FPGA Platform
@@ -42,17 +43,21 @@ class ExampleFPGAPlatform(implicit val p: Parameters) extends Module {
 
   // JTAG Debug Interface
   val sys_jtag = sys.debug.systemjtag.get
-  JTAGPinsFromPort(io.pins.jtag, sys_jtag.jtag)
+  sys_jtag.jtag.TCK := io.jtag.jtag_TCK
+  sys_jtag.jtag.TMS := io.jtag.jtag_TMS
+  sys_jtag.jtag_TDI := io.jtag.jtag_TDI
+  io.jtag.jtag_TDO := sys_jtag.jtag_TDO.data
+
   sys_jtag.reset := io.jtag_reset
   sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
 
   // Buttons Inputs
-  GPIOPinsFromPort(io.pins.btns, sys.gpio(0))
+  io.btns.zipWithIndex.foreach { (btn, i) => sys.gpio(0).pins(i).i.ival := btn }
 
   // LEDs Outputs
-  GPIOPinsFromPort(io.pins.leds, sys.gpio(1))
+  io.leds.zipWithIndex.foreach { (led, i) => led := sys.gpio(1).pins(i).o.oval }
 
   // External Interrupt
-  sys.interrupts := io.extInterrupts
+  sys.interrupts := io.ints
 
 }

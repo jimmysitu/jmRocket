@@ -1,6 +1,7 @@
 package examplefpga
 
 import chisel3._
+import chisel3.util._
 import freechips.rocketchip.subsystem._
 import freechips.rocketchip.config.{Field, Parameters}
 import freechips.rocketchip.diplomacy._
@@ -28,8 +29,9 @@ object PinGen {
 // Example FPGA Platform IO
 class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
   val jtag = p(IncludeJtagDTM).option(new FPGAJTAGIO)
-  val btns = Input(Vec(p(PeripheryGPIOKey)(0).width, Bool()))
-  val leds = Output(Vec(p(PeripheryGPIOKey)(1).width, Bool()))
+  val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
+  val leds = Output(UInt(p(PeripheryGPIOKey)(1).width.W))
+  //val leds = Output(Vec(p(PeripheryGPIOKey)(1).width, Bool()))
   val ints = Input(UInt(p(NExtTopInterrupts).W))
   val jtag_reset = Input(Bool())
   val ndreset = Input(Bool())
@@ -53,15 +55,18 @@ class ExampleFPGAPlatform(implicit val p: Parameters) extends Module {
   sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
 
   // Buttons Inputs
-  io.btns.zipWithIndex.foreach { case (btn, i) => sys.gpio(0).pins(i).i.ival := btn }
+  (0 until p(PeripheryGPIOKey)(0).width).toList.foreach {
+    case (i) => sys.gpio(0).pins(i).i.ival := io.btns(i)
+  }
 
   // LEDs Outputs
-  io.leds.zipWithIndex.foreach {
-    case (led, i) => {
-      led := sys.gpio(1).pins(i).o.oval
-      sys.gpio(1).pins(i).i.ival := false.B
+  io.leds := Cat(
+    Seq.tabulate(p(PeripheryGPIOKey)(1).width) {
+      i => sys.gpio(1).pins(i).o.oval
     }
-  }
+  )
+  // Tie off no use inputs
+  sys.gpio(1).pins.foreach { _.i.ival := false.B}
 
   // External Interrupt
   sys.interrupts := io.ints

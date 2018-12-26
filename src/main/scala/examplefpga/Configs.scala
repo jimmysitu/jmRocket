@@ -99,6 +99,9 @@ class WithExampleFPGAPlatform extends Config((site, here, up) => {
   case BuildPlatform => {
     (p: Parameters) => new ExampleFPGAPlatform()(p)
   }
+  case BuildTop => (clock: Clock, reset: Bool, p: Parameters) => {
+    Module(LazyModule(new ExampleFPGASystem()(p)).module)
+  }
   case JtagDTMKey => new JtagDTMConfig (
     idcodeVersion = 2,
     idcodePartNum = 0x000,

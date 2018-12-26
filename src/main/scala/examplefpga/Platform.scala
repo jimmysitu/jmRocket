@@ -6,7 +6,7 @@ import freechips.rocketchip.config.{Field, Parameters}
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.devices.debug._
 import freechips.rocketchip.devices.tilelink._
-import freechips.rocketchip.util.DontTouch
+import freechips.rocketchip.util._
 import testchipip._
 
 import sifive.blocks.devices.jtag._
@@ -28,8 +28,8 @@ object PinGen {
 // Example FPGA Platform IO
 class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
   val jtag = p(IncludeJtagDTM).option(new FPGAJTAGIO)
-  val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
-  val leds = Ouptput(UInt(p(PeripheryGPIOKey)(1).width.W))
+  val btns = Input(Vec(p(PeripheryGPIOKey)(0).width, Bool()))
+  val leds = Output(Vec(p(PeripheryGPIOKey)(1).width, Bool()))
   val ints = Input(UInt(p(NExtTopInterrupts).W))
   val jtag_reset = Input(Bool())
   val ndreset = Input(Bool())
@@ -43,19 +43,20 @@ class ExampleFPGAPlatform(implicit val p: Parameters) extends Module {
 
   // JTAG Debug Interface
   val sys_jtag = sys.debug.systemjtag.get
-  sys_jtag.jtag.TCK := io.jtag.jtag_TCK
-  sys_jtag.jtag.TMS := io.jtag.jtag_TMS
-  sys_jtag.jtag_TDI := io.jtag.jtag_TDI
-  io.jtag.jtag_TDO := sys_jtag.jtag_TDO.data
+  val io_jtag = io.jtag.get
+  sys_jtag.jtag.TCK := io_jtag.jtag_TCK
+  sys_jtag.jtag.TMS := io_jtag.jtag_TMS
+  sys_jtag.jtag.TDI := io_jtag.jtag_TDI
+  io_jtag.jtag_TDO := sys_jtag.jtag.TDO.data
 
   sys_jtag.reset := io.jtag_reset
   sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
 
   // Buttons Inputs
-  io.btns.zipWithIndex.foreach { (btn, i) => sys.gpio(0).pins(i).i.ival := btn }
+  io.btns.zipWithIndex.foreach { case (btn, i) => sys.gpio(0).pins(i).i.ival := btn }
 
   // LEDs Outputs
-  io.leds.zipWithIndex.foreach { (led, i) => led := sys.gpio(1).pins(i).o.oval }
+  io.leds.zipWithIndex.foreach { case (led, i) => led := sys.gpio(1).pins(i).o.oval }
 
   // External Interrupt
   sys.interrupts := io.ints

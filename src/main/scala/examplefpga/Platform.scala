@@ -13,6 +13,8 @@ import sifive.blocks.devices.jtag._
 import sifive.blocks.devices.gpio._
 import sifive.blocks.devices.pinctrl._
 
+case object BuildPlatform extends Field[Parameters => ExampleFPGAPlatform]
+
 // PinGen
 object PinGen {
   def apply(): BasePin =  {

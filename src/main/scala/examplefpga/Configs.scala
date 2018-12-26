@@ -14,6 +14,7 @@ import testchipip._
 
 import sifive.blocks.devices.gpio._
 
+
 class WithBootROM extends Config((site, here, up) => {
   case BootROMParams => BootROMParams(
     contentFileName = s"./testchipip/bootrom/bootrom.rv${site(XLen)}.img")
@@ -24,6 +25,10 @@ object ConfigValName {
 }
 import ConfigValName._
 
+
+/**
+ * System level Config
+ */
 class WithExampleFPGASystem extends Config((site, here, up) => {
   case BuildTop => (clock: Clock, reset: Bool, p: Parameters) => {
     Module(LazyModule(new ExampleFPGASystem()(p)).module)
@@ -87,3 +92,23 @@ class Tiny64Config extends Config(
   new WithJtagDTM ++
   new WithExampleFPGASystem ++ new BaseTiny64Config)
 
+/**
+ * Platform Level Config
+ */
+class WithExampleFPGAPlatform extends Config((site, here, up) => {
+  case BuildPlatform => {
+    (p: Parameters) => new ExampleFPGAPlatform()(p)
+  }
+  case JtagDTMKey => new JtagDTMConfig (
+    idcodeVersion = 2,
+    idcodePartNum = 0x000,
+    idcodeManufId = 0x489,
+    debugIdleCycles = 5)
+  case PeripheryGPIOKey => List(
+    GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
+    GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
+})
+
+class Tiny64Platform extends Config(
+  new WithJtagDTM ++
+  new WithExampleFPGAPlatform ++ new BaseTiny64Config)

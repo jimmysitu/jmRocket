@@ -56,7 +56,12 @@ class ExampleFPGAPlatform(implicit val p: Parameters) extends Module {
   io.btns.zipWithIndex.foreach { case (btn, i) => sys.gpio(0).pins(i).i.ival := btn }
 
   // LEDs Outputs
-  io.leds.zipWithIndex.foreach { case (led, i) => led := sys.gpio(1).pins(i).o.oval }
+  io.leds.zipWithIndex.foreach {
+    case (led, i) => {
+      led := sys.gpio(1).pins(i).o.oval
+      sys.gpio(1).pins(i).i.ival := false.B
+    }
+  }
 
   // External Interrupt
   sys.interrupts := io.ints

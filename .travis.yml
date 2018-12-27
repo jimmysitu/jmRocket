@@ -51,7 +51,7 @@ jobs:
   include:
     - stage: prepare cache-riscv-tools
       script:
-        - travis_wait 50 make submodules -C regression SUITE=none
+        - travis_wait 50 git submodule update --init --recursive
         - travis_wait 50 make openocd -C regression SUITE=none
         - travis_wait 50 make spike -C regression SUITE=none
         - travis_wait 50 make toolchain -C regression SUITE=none

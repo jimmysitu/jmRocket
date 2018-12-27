@@ -13,6 +13,7 @@
       * PLL, DCM, MIG added here
     * Chip, top level of an FPGA Chip, extends FPGA board shell, same board project can be reused
       * Tie pins to FPGA physical pins
+      * Override package pins if FPGA board is rework
   * RTL simulation environment
 
 * ASIC compose flow

@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 base_dir = $(abspath ..)
 generated_dir = $(abspath ./generated-src)
 

@@ -1,11 +1,12 @@
 git:
-  submodules: true
+  submodules: false
 language: scala
 sudo: required
 cache:
   apt: true
   directories:
     $HOME/.ivy2
+    regression/install
     ivlsim/iverilog
     verisim/verilator
 
@@ -48,30 +49,35 @@ branches:
 
 jobs:
   include:
-#    - stage: prepare cache-riscv-tools
-#      script:
-#        - travis_wait 120 make tools -C regression SUITE=none
-#      before_install:
-#        - export CXX=g++-4.8 CC=gcc-4.8
-#      before_cache:
-#        - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf
+    - stage: prepare cache-riscv-tools
+      script:
+        - travis_wait 50 make openocd -C regression SUITE=none
+        - travis_wait 50 make spike -C regression SUITE=none
+        - travis_wait 50 make toolchain -C regression SUITE=none
+        - travis_wait 50 make pk -C regression SUITE=none
+        - travis_wait 50 make tests -C regression SUITE=none
+        - travis_wait 10  date > regression/install/install.stamp
+      before_install:
+        - export CXX=g++-4.8 CC=gcc-4.8
+      before_cache:
+        - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf
     - stage: prepare cache-verilator
       script:
-        - travis_wait 120 make verilator -C verisim
+        - travis_wait 50 make verilator -C verisim
       before_install:
         - export CXX=g++-4.8 CC=gcc-4.8
     - stage: prepare cache-ivlsim
       script:
-        - travis_wait 120 make iverilog -C ivlsim
+        - travis_wait 50 make iverilog -C ivlsim
       before_install:
         - export CXX=g++-4.8 CC=gcc-4.8
     - &test
       stage: Test
       script:
-        - travis_wait 100 make -f Makefile.examplefpga verilog
+        - travis_wait 20 make -f Makefile.examplefpga verilog
     - <<: *test
       script:
-        - travis_wait 80 make PROJECT=examplefpga -C verisim
+        - travis_wait 20 make PROJECT=examplefpga -C verisim
     - <<: *test
       script:
-        - travis_wait 80 make PROJECT=example -C verisim
+        - travis_wait 20 make PROJECT=example -C verisim

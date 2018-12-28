@@ -1,11 +1,12 @@
 git:
-  submodules: false
+  submodules: true
 language: scala
 sudo: required
 cache:
   apt: true
   directories:
     $HOME/.ivy2
+    .git/modules
     regression/install
     ivlsim/iverilog
     verisim/verilator
@@ -49,9 +50,6 @@ branches:
 
 jobs:
   include:
-    - stage: prepare submodules
-      script:
-        - travis_wait 50 git submodule update --init --recursive
     - stage: prepare cache-openocd
       script:
         - travis_wait 50 make openocd -C regression SUITE=none
@@ -92,3 +90,4 @@ jobs:
     - <<: *test
       script:
         - travis_wait 20 make PROJECT=example -C verisim
+

@@ -50,10 +50,10 @@ branches:
 
 jobs:
   include:
-    - stage: prepare cache-install-stamp
+    - stage: prepare cache-riscv-tools
       env:
         global:
-          MAKEFLAGS='-j2'
+          - MAKEFLAGS='-j2'
       before_install:
         - export CXX=g++-4.8 CC=gcc-4.8
       install:

@@ -56,7 +56,7 @@ jobs:
         - travis_wait 50 make spike -C regression SUITE=none
     - stage: prepare cache-toolchain
       script:
-        - travis_wait 100 MAKEFLAGS=-j2 make toolchain -C regression SUITE=none
+        - travis_wait 100 MAKEFLAGS='-j2' make toolchain -C regression SUITE=none
     - stage: prepare cache-pk
       script:
         - travis_wait 50 make pk -C regression SUITE=none

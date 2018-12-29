@@ -156,16 +156,12 @@ stamps/other-submodules.stamp:
 	git -C $(abspath $(TOP)) submodule update --init --recursive $(submodule_names)
 	date > $@
 
-stamps/riscv-tools_checkout.stamp:
+checkout: $(RISCV)/riscv-tools_checkout.stamp
+$(RISCV)/riscv-tools_checkout.stamp:
 	mkdir -p $(dir $@)
-	if [ -d $(RISCV_TOOLS) ]; then \
-		git -C $(RISCV_TOOLS) fetch --depth=50; \
-	else \
-		git -C $(abspath $(TOP)) clone --depth=50 -n https://github.com/riscv/riscv-tools.git; \
-	fi
+	git -C $(abspath $(TOP)) clone -n https://github.com/riscv/riscv-tools.git
 	git -C $(RISCV_TOOLS) checkout $(TOOLS_HASH)
 	git -C $(RISCV_TOOLS) submodule update --init --recursive
-	rm -f $(RISCV_TOOLS)/.travis.yml
 	mkdir -p $(dir $@)
 	date > $@
 
@@ -175,13 +171,13 @@ stamps/riscv-tools_checkout.stamp:
 # evaluated as a depenency for install.stamp. This is needed because
 # the timestamp on install.stamp will be older than the checkout stamp
 # anytime we restore the installation area from cache in travisci.
-$(RISCV)/install.stamp: | stamps/riscv-tools_checkout.stamp
+$(RISCV)/install.stamp: | $(RISCV)/riscv-tools_checkout.stamp
 	mkdir -p $(dir $@)
 	+cd $(RISCV_TOOLS); RISCV=$(abspath $(RISCV)) ./build.sh
 	date > $@
 
 openocd: $(RISCV)/install_openocd.stamp
-$(RISCV)/install_openocd.stamp: | stamps/riscv-tools_checkout.stamp
+$(RISCV)/install_openocd.stamp:
 	mkdir -p $(dir $@)
 	+cd $(RISCV_TOOLS); RISCV=$(abspath $(RISCV));\
 		. ./build.common; \
@@ -189,7 +185,7 @@ $(RISCV)/install_openocd.stamp: | stamps/riscv-tools_checkout.stamp
 	date > $@
 
 spike: $(RISCV)/install_spike.stamp
-$(RISCV)/install_spike.stamp: | stamps/riscv-tools_checkout.stamp
+$(RISCV)/install_spike.stamp:
 	mkdir -p $(dir $@)
 	+cd $(RISCV_TOOLS); RISCV=$(abspath $(RISCV)); \
 		. ./build.common; \
@@ -198,7 +194,7 @@ $(RISCV)/install_spike.stamp: | stamps/riscv-tools_checkout.stamp
 	date > $@
 
 toolchain: $(RISCV)/install_toolchain.stamp
-$(RISCV)/install_toolchain.stamp: | stamps/riscv-tools_checkout.stamp
+$(RISCV)/install_toolchain.stamp:
 	mkdir -p $(dir $@)
 	+cd $(RISCV_TOOLS); RISCV=$(abspath $(RISCV)); \
 		. ./build.common; \
@@ -206,7 +202,7 @@ $(RISCV)/install_toolchain.stamp: | stamps/riscv-tools_checkout.stamp
 	date > $@
 
 pk: $(RISCV)/install_pk.stamp
-$(RISCV)/install_pk.stamp: | stamps/riscv-tools_checkout.stamp
+$(RISCV)/install_pk.stamp:
 	mkdir -p $(dir $@)
 	+cd $(RISCV_TOOLS); RISCV=$(abspath $(RISCV)); \
 		. ./build.common; \
@@ -214,7 +210,7 @@ $(RISCV)/install_pk.stamp: | stamps/riscv-tools_checkout.stamp
 	date > $@
 
 tests: $(RISCV)/install_tests.stamp
-$(RISCV)/install_tests.stamp: | stamps/riscv-tools_checkout.stamp
+$(RISCV)/install_tests.stamp: | $(RISCV)/riscv-tools_checkout.stamp
 	mkdir -p $(dir $@)
 	+cd $(RISCV_TOOLS); RISCV=$(abspath $(RISCV)); \
 		. ./build.common; \
@@ -362,7 +358,7 @@ endif
 
 JTAG_DTM_SIM_ARGS = +verbose +jtag_rbb_enable=1 $(SEED_ARG)
 
-stamps/riscv-tests.stamp: stamps/riscv-tools_checkout.stamp
+stamps/riscv-tests.stamp: $(RISCV)/riscv-tools_checkout.stamp
 	mkdir -p $(dir $@)
 	date > $@
 

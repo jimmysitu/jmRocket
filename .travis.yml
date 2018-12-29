@@ -50,38 +50,33 @@ branches:
 
 jobs:
   include:
-    - stage: prepare cache-riscv-tools
+#    - stage: prepare cache-riscv-tools
+#      before_install:
+#        - export CXX=g++-4.8 CC=gcc-4.8
+#        - export MAKEFLAGS='-j2'
+#      install:
+#        - travis_wait
+#      script:
+#        - travis_wait 120 make tools -C regression SUITE=none
+#      before_cache:
+#        - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf
+    - stage: prepare cache-toolchain
       before_install:
         - export CXX=g++-4.8 CC=gcc-4.8
         - export MAKEFLAGS='-j2'
-      install:
-        - travis_wait
       script:
-        - travis_wait 120 make tools -C regression SUITE=none
+        - travis_wait 100 make toolchain -C regression SUITE=none
+    - stage: prepare cache-misc-tools
+      before_install:
+        - export CXX=g++-4.8 CC=gcc-4.8
+      script:
+        - travis_wait 50 make openocd -C regression SUITE=none
+        - travis_wait 50 make spike -C regression SUITE=none
+        - travis_wait 50 make pk -C regression SUITE=none
+        - travis_wait 50 make tests -C regression SUITE=none
+        - travis_wait 10  date > regression/install/install.stamp
       before_cache:
         - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf
-
-#    - stage: prepare cache-openocd
-#      script:
-#        - travis_wait 50 make openocd -C regression SUITE=none
-#        - travis_wait 50 make spike -C regression SUITE=none
-#    - stage: prepare cache-toolchain
-#      script:
-#        - travis_wait 100 make toolchain -C regression SUITE=none MAKEFLAGS='-j2'
-#    - stage: prepare cache-pk
-#      script:
-#        - travis_wait 50 make pk -C regression SUITE=none
-#    - stage: prepare cache-tests
-#      script:
-#        - travis_wait 50 make tests -C regression SUITE=none
-#    
-#    - stage: prepare cache-install-stamp
-#      script:
-#        - travis_wait 10  date > regression/install/install.stamp
-#      before_install:
-#        - export CXX=g++-4.8 CC=gcc-4.8
-#      before_cache:
-#        - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf
 
     - stage: prepare cache-verilator
       script:

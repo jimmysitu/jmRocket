@@ -7,7 +7,7 @@ cache:
   directories:
     $HOME/.ivy2
     .git/modules
-    riscv-tools/.git
+    riscv-tools
     regression/install
     ivlsim/iverilog
     verisim/verilator

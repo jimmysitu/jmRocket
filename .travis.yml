@@ -3,6 +3,7 @@ git:
 language: scala
 sudo: required
 cache:
+  timeout: 3000
   apt: true
   directories:
     $HOME/.ivy2

@@ -158,10 +158,10 @@ stamps/other-submodules.stamp:
 
 stamps/riscv-tools_checkout.stamp:
 	mkdir -p $(dir $@)
-	if [ -d $(RISCV_TOOLS)]; then \
-		git -C $(RISCV_TOOLS) fetch \
+	if [ -d $(RISCV_TOOLS) ]; then \
+		git -C $(RISCV_TOOLS) fetch; \
 	else \
-		git -C $(abspath $(TOP)) clone -n https://github.com/riscv/riscv-tools.git \
+		git -C $(abspath $(TOP)) clone -n https://github.com/riscv/riscv-tools.git; \
 	fi
 	git -C $(RISCV_TOOLS) checkout $(TOOLS_HASH)
 	git -C $(RISCV_TOOLS) submodule update --init --recursive

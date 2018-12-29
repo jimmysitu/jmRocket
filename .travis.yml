@@ -7,6 +7,7 @@ cache:
   directories:
     $HOME/.ivy2
     .git/modules
+    riscv-tools/.git
     regression/install
     ivlsim/iverilog
     verisim/verilator
@@ -60,6 +61,9 @@ jobs:
 #        - travis_wait 120 make tools -C regression SUITE=none
 #      before_cache:
 #        - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf
+    - stage: prepare cache-checkout
+      script:
+        - travis_wait 50 make stamps/riscv-tools_checkout.stamp -C regression SUITE=none
     - stage: prepare cache-toolchain
       before_install:
         - export CXX=g++-4.8 CC=gcc-4.8

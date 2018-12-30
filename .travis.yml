@@ -65,7 +65,7 @@ jobs:
     - stage: prepare cache-toolchain
       before_install:
         - export CXX=g++-4.8 CC=gcc-4.8
-        - export MAKEFLAGS='-j2'
+        - export MAKEFLAGS='-j3'
       script:
         - travis_wait 100 make toolchain -C regression SUITE=none
     - stage: prepare cache-misc-tools

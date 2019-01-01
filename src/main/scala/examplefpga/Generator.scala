@@ -8,3 +8,11 @@ object Generator extends GeneratorApp {
   generateFirrtl
   generateAnno
 }
+
+object FPGAGenerator extends GeneratorApp {
+  val longName = names.topModuleProject + "." + names.topModuleClass + "." + names.configs
+  generateFirrtl
+  generateAnno
+  generateROMs
+  generateArtefacts
+}

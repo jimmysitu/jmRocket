@@ -15,6 +15,8 @@ import sifive.blocks.devices.gpio._
 import sifive.blocks.devices.pinctrl._
 
 import sifive.fpgashells.shell._
+import sifive.fpgashells.ip.xilinx._
+import sifive.fpgashells.clocks._
 
 case object BuildPlatform extends Field[Parameters => ExampleFPGAPlatform]
 
@@ -31,44 +33,48 @@ class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
   val jtag = p(IncludeJtagDTM).option(new FPGAJTAGIO)
   val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
   val leds = Output(UInt(p(PeripheryGPIOKey)(1).width.W))
-  //val leds = Output(Vec(p(PeripheryGPIOKey)(1).width, Bool()))
   val ints = Input(UInt(p(NExtTopInterrupts).W))
   val jtag_reset = Input(Bool())
-  val ndreset = Input(Bool())
 }
 
 // Example FPGA Platform
-// 2 buttons as input, 2 leds as output, 1 jtag
-class ExampleFPGAPlatform(implicit val p: Parameters) extends Module {
-  val sys = p(BuildTop)(clock, reset.toBool, p)
-  val io = IO(new ExampleFPGAPlatformIO)
+// buttons as input, leds as output, 1 jtag
+class ExampleFPGAPlatform(implicit p: Parameters) extends LazyModule {
+  val sys = LazyModule(new ExampleFPGASystem()(p))
 
-  // JTAG Debug Interface
-  val sys_jtag = sys.debug.systemjtag.get
-  val io_jtag = io.jtag.get
-  sys_jtag.jtag.TCK := io_jtag.jtag_TCK
-  sys_jtag.jtag.TMS := io_jtag.jtag_TMS
-  sys_jtag.jtag.TDI := io_jtag.jtag_TDI
-  io_jtag.jtag_TDO := sys_jtag.jtag.TDO.data
+  override lazy val module = new LazyModuleImp(this) {
+    val io = IO(new ExampleFPGAPlatformIO)
 
-  sys_jtag.reset := io.jtag_reset
-  sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
+    // JTAG Debug Interface
+    val sys_jtag = sys.module.debug.systemjtag.get
+    val io_jtag = io.jtag.get
+    sys_jtag.jtag.TCK := io_jtag.jtag_TCK
+    sys_jtag.jtag.TMS := io_jtag.jtag_TMS
+    sys_jtag.jtag.TDI := io_jtag.jtag_TDI
+    io_jtag.jtag_TDO := sys_jtag.jtag.TDO.data
 
-  // Buttons Inputs
-  (0 until p(PeripheryGPIOKey)(0).width).toList.foreach {
-    case (i) => sys.gpio(0).pins(i).i.ival := io.btns(i)
-  }
+    sys_jtag.reset := io.jtag_reset
+    sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
+    
+    // System Reset
+    sys.module.reset :=  reset.toBool | sys.module.debug.ndreset
 
-  // LEDs Outputs
-  io.leds := Cat(
-    Seq.tabulate(p(PeripheryGPIOKey)(1).width) {
-      i => sys.gpio(1).pins(i).o.oval
+    // Buttons Inputs
+    (0 until p(PeripheryGPIOKey)(0).width).toList.foreach {
+      case (i) => sys.module.gpio(0).pins(i).i.ival := io.btns(i)
     }
-  )
-  // Tie off no use inputs
-  sys.gpio(1).pins.foreach { _.i.ival := false.B}
 
-  // External Interrupt
-  sys.interrupts := io.ints
+    // LEDs Outputs
+    io.leds := Cat(
+      Seq.tabulate(p(PeripheryGPIOKey)(1).width) {
+        i => sys.module.gpio(1).pins(i).o.oval
+      }
+    )
 
+    // Tie off no use inputs
+    sys.module.gpio(1).pins.foreach { _.i.ival := false.B}
+
+    // External Interrupt
+    sys.module.interrupts := io.ints
+  }
 }

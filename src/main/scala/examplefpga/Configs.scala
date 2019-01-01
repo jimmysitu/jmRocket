@@ -13,6 +13,8 @@ import freechips.rocketchip.util._
 import testchipip._
 
 import sifive.blocks.devices.gpio._
+import sifive.fpgashells.shell.xilinx._
+import sifive.fpgashells.shell._
 
 
 class WithBootROM extends Config((site, here, up) => {
@@ -21,7 +23,7 @@ class WithBootROM extends Config((site, here, up) => {
 })
 
 object ConfigValName {
-  implicit val valName = ValName("ExampleFPGAChip")
+  implicit val valName = ValName("ExampleDesign")
 }
 import ConfigValName._
 
@@ -115,3 +117,27 @@ class WithExampleFPGAPlatform extends Config((site, here, up) => {
 class Tiny64Platform extends Config(
   new WithJtagDTM ++
   new WithExampleFPGAPlatform ++ new BaseTiny64Config)
+
+/**
+ * Chip Level Config
+ */
+class WithExampleFPGAChip extends Config((site, here, up) => {
+  case DesignKey => {
+    (p: Parameters) => new ExampleFPGAChip()(p)
+  }
+  case BuildTop => (clock: Clock, reset: Bool, p: Parameters) => {
+    Module(LazyModule(new ExampleFPGASystem()(p)).module)
+  }
+  case JtagDTMKey => new JtagDTMConfig (
+    idcodeVersion = 2,
+    idcodePartNum = 0x000,
+    idcodeManufId = 0x489,
+    debugIdleCycles = 5)
+  case PeripheryGPIOKey => List(
+    GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
+    GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
+})
+
+class Tiny64Chip extends Config(
+  new WithJtagDTM ++
+  new WithExampleFPGAChip ++ new BaseTiny64Config)

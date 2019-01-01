@@ -11,11 +11,38 @@ import testchipip._
 
 import sifive.blocks.devices.gpio._
 
-//import sifive.fpgashells.shell.xilinx.miz701nshell.{Miz701nShell}
+import sifive.fpgashells.clocks._
+import sifive.fpgashells.shell._
+import sifive.fpgashells.shell.xilinx._
 import sifive.fpgashells.ip.xilinx.{IBUFG, IOBUF, PULLUP, PowerOnResetFPGAOnly}
 
+// Example FPGA Chip
+class ExampleFPGAChip(implicit p: Parameters) extends LazyModule {
+  // Clock & Reset from FPGA shell
+  val chipClock = p(ClockInputOverlayKey).head(ClockInputOverlayParams())
+  val corePLL   = p(PLLFactoryKey)()
+  val coreGroup = ClockGroup()
+  val wrangler  = LazyModule(new ResetWrangler)
+  //val coreClock = ClockSinkNode(freqMHz = p(DevKitFPGAFrequencyKey))
+  val coreClock = ClockSinkNode(freqMHz = 50)
+  coreClock := wrangler.node := coreGroup := corePLL := chipClock
 
-//// Example FPGA Chip
-//class ExampleFPGAChip(implicit val p: Parameters) extends Miz701nShell {
-//}
+  // Interface from FPGA shell
+  val jtag = p(JTAGDebugOverlayKey).headOption.map(_(JTAGDebugOverlayParams()))
+  val leds = p(LEDOverlayKey).headOption.map(_(LEDOverlayParams()))
+  val btns = p(SwitchOverlayKey).headOption.map(_(SwitchOverlayParams()))
+
+  // SoC design
+  val platform = LazyModule(new ExampleFPGAPlatform()(p))
+
+  override lazy val module = new LazyModuleImp(this) {
+//    val (core, _) = coreClock.in(0)
+//    childClock := core.clock
+//    childReset := core.reset
+
+    jtag.get <> platform.module.io.jtag.get
+    leds.get <>platform.module.io.leds
+    platform.module.io.btns <> btns.get
+  }
+}
 

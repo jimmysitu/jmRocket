@@ -46,7 +46,7 @@ $(FIRRTL_JAR): $(shell find $(rocketchip_dir)/firrtl/src/main/scala -iname "*.sc
 firrtl := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).fir
 $(firrtl): $(shell find $(base_dir)/src/main/scala -name '*.scala') $(FIRRTL_JAR)
 	mkdir -p $(dir $@)
-	$(SBT) "runMain $(PROJECT).Generator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
+	$(SBT) "runMain $(PROJECT).FPGAGenerator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
 
 .PHONY: firrtl
 firrtl: $(firrtl)

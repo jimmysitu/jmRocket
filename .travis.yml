@@ -75,7 +75,7 @@ jobs:
         - travis_wait 50 make openocd -C regression SUITE=none
         - travis_wait 50 make spike -C regression SUITE=none
         - travis_wait 50 make pk -C regression SUITE=none
-        - travis_wait 50 make tests -C regression SUITE=none
+#        - travis_wait 50 make tests -C regression SUITE=none
         - travis_wait 10  date > regression/install/install.stamp
       before_cache:
         - ls -t regression/install | tail -n+2 | sed s@^@regression/install/@ | xargs rm -rf

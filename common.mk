@@ -7,7 +7,8 @@
 # - CONFIG
 # - BUILD_DIR
 # - FPGA_DIR
-
+# - FLOW_TYPE
+#
 # Optional variables:
 # - EXTRA_FPGA_VSRCS
 
@@ -25,14 +26,16 @@ export BUILD_DIR
 EXTRA_FPGA_VSRCS ?=
 PATCHVERILOG ?= ""
 BOOTROM_DIR ?= ""
+FLOW_TYPE ?= "FPGA"
 
 base_dir := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 export rocketchip_dir := $(base_dir)/rocket-chip
 SBT ?= java -jar $(rocketchip_dir)/sbt-launch.jar ++2.12.4
 
 # Build firrtl.jar and put it where chisel3 can find it.
+ROCKET_CLASSES ?= "$(rocketchip_dir)/target/scala-2.12/classes:$(rocketchip_dir)/chisel3/target/scala-2.12/*"
 FIRRTL_JAR ?= $(rocketchip_dir)/firrtl/utils/bin/firrtl.jar
-FIRRTL ?= java -Xmx2G -Xss8M -XX:MaxPermSize=256M -cp $(FIRRTL_JAR) firrtl.Driver
+FIRRTL ?= java -Xmx2G -Xss8M -XX:MaxPermSize=256M -cp "$(FIRRTL_JAR)":"$(ROCKET_CLASSES)" firrtl.Driver
 
 $(FIRRTL_JAR): $(shell find $(rocketchip_dir)/firrtl/src/main/scala -iname "*.scala")
 	$(MAKE) -C $(rocketchip_dir)/firrtl SBT="$(SBT)" root_dir=$(rocketchip_dir)/firrtl build-scala
@@ -46,15 +49,28 @@ $(FIRRTL_JAR): $(shell find $(rocketchip_dir)/firrtl/src/main/scala -iname "*.sc
 firrtl := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).fir
 $(firrtl): $(shell find $(base_dir)/src/main/scala -name '*.scala') $(FIRRTL_JAR)
 	mkdir -p $(dir $@)
+ifeq ($(FLOW_TYPE), ASIC)
+	$(SBT) "runMain $(PROJECT).ASICGenerator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
+else
 	$(SBT) "runMain $(PROJECT).FPGAGenerator $(BUILD_DIR) $(PROJECT) $(MODEL) $(CONFIG_PROJECT) $(CONFIG)"
-
+endif
 .PHONY: firrtl
 firrtl: $(firrtl)
 
+
 # Build .v
 verilog := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).v
-$(verilog): $(firrtl) $(FIRRTL_JAR)
+MEM_GEN ?= $(rocketchip_dir)/scripts/vlsi_mem_gen
+$(BUILD_DIR)/%.v: $(firrtl) $(FIRRTL_JAR)
+ifeq ($(FLOW_TYPE), ASIC)
+	$(FIRRTL) -i $(firrtl) -o $@ -X verilog --infer-rw $(MODEL) --repl-seq-mem -c:$(MODEL):-o:$(BUILD_DIR)/$*.conf -faf $(BUILD_DIR)/$*.anno.json -td $(BUILD_DIR)/
+	cd $(BUILD_DIR) && \
+	rm -f $*.behav_srams.v && \
+	$(MEM_GEN) $(BUILD_DIR)/$*.conf >> $*.tmp && \
+	mv $*.tmp $*.behav_srams.v
+else
 	$(FIRRTL) -i $(firrtl) -o $@ -X verilog
+endif
 ifneq ($(PATCHVERILOG),"")
 	$(PATCHVERILOG)
 endif

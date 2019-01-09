@@ -9,7 +9,17 @@ object Generator extends GeneratorApp {
   generateAnno
 }
 
+// For FPGA flow
 object FPGAGenerator extends GeneratorApp {
+  val longName = names.topModuleProject + "." + names.topModuleClass + "." + names.configs
+  generateFirrtl
+  generateAnno
+  generateROMs
+  generateArtefacts
+}
+
+// For ASIC flow
+object ASICGenerator extends GeneratorApp {
   val longName = names.topModuleProject + "." + names.topModuleClass + "." + names.configs
   generateFirrtl
   generateAnno

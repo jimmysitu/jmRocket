@@ -22,3 +22,6 @@ VSRCS := \
 FLOW_TYPE := ASIC
 
 include common.mk
+
+release:
+	tar -czf release_$(shell date +%H%M_%m%d%y).tgz -C $(BUILD_DIR) .

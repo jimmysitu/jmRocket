@@ -47,6 +47,21 @@ ifeq ($(SUITE),)
 $(error Set SUITE to the regression suite you want to run)
 endif
 
+ifeq ($(SUITE),exampleA)
+PROJECT=example
+CONFIGS=DefaultExampleConfig
+endif
+
+ifeq ($(SUITE),examplefpgaA)
+PROJECT=examplefpga
+CONFIGS=DefaultExampleConfig
+endif
+
+ifeq ($(SUITE),examplefpgaB)
+PROJECT=examplefpga
+CONFIGS=Tiny64Config
+endif
+
 ifeq ($(SUITE),RocketSuiteA)
 PROJECT=freechips.rocketchip.system
 CONFIGS=DefaultConfig
@@ -102,6 +117,7 @@ verilator:
 iverilog:
 	$(MAKE) RISCV=$(RISCV) -C $(abspath $(TOP)/ivlsim) iverilog
 
+EMU_VERILOG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-verilog.stamp)
 EMU_DEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-debug.stamp)
 EMU_NDEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-ndebug.stamp)
 EMU_ASM_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-asm-tests.stamp)
@@ -109,6 +125,7 @@ EMU_BMARK_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-bmark
 EMU_REGRESSION_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-regression-tests.stamp)
 EMU_TORTURE_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-torture-$(TORTURE_CONFIG).stamp)
 
+verisim-verilog: $(EMU_VERILOG_STAMPS)
 verisim-debug: $(EMU_DEBUG_STAMPS)
 verisim-ndebug: $(EMU_NDEBUG_STAMPS)
 verisim-asm-tests: $(EMU_ASM_TEST_STAMPS)

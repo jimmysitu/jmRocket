@@ -93,11 +93,15 @@ jobs:
     - &test
       stage: Test
       script:
+        # Emulation / Synthesis
         - travis_wait 20 make -f Makefile.examplefpga verilog
+        - travis_wait 20 make -f Makefile.asic verilog
     - <<: *test
       script:
-        - travis_wait 20 make PROJECT=examplefpga -C verisim
-    - <<: *test
-      script:
-        - travis_wait 20 make PROJECT=example -C verisim
-
+        # Complie for simulation
+        - travis_wait 20 make -C regression SUITE=exampleA verisim-verilog
+        - travis_wait 20 make -C regression SUITE=exampleA ivlsim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaA verisim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaA ivlsim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaB verisim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaB ivlsim-verilog

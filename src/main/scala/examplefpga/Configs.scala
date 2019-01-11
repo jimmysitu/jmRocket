@@ -91,7 +91,6 @@ class BaseTiny64Config extends Config(
   new freechips.rocketchip.system.BaseConfig)
 
 class Tiny64Config extends Config(
-  new WithJtagDTM ++
   new WithExampleFPGASystem ++ new BaseTiny64Config)
 
 /**

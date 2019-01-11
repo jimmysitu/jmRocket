@@ -1,5 +1,5 @@
 base_dir=$(abspath ..)
-sim_dir=$(abspath .)
+sim_dir= .
 
 PROJECT ?= example
 MODEL ?= TestHarness
@@ -7,15 +7,15 @@ CONFIG ?= DefaultExampleConfig
 CFG_PROJECT ?= $(PROJECT)
 TB ?= TestDriver
 
-sim = $(sim_dir)/simulator-$(PROJECT)-$(CONFIG)
-sim_debug = $(sim_dir)/simulator-$(PROJECT)-$(CONFIG)-debug
+sim = $(abspath $(sim_dir))/simulator-$(PROJECT)-$(CONFIG)
+sim_debug = $(abspath $(sim_dir))/simulator-$(PROJECT)-$(CONFIG)-debug
 
 default: $(sim)
 
 debug: $(sim_debug)
 
 CXXFLAGS := $(CXXFLAGS) -O1 -std=c++11 -I$(RISCV)/include -D__STDC_FORMAT_MACROS
-LDFLAGS := $(LDFLAGS) -L$(RISCV)/lib -Wl,-rpath,$(RISCV)/lib -L$(sim_dir) -lfesvr -lpthread
+LDFLAGS := $(LDFLAGS) -L$(RISCV)/lib -Wl,-rpath,$(RISCV)/lib -L$(abspath $(sim_dir)) -lfesvr -lpthread
 
 include $(base_dir)/Makefrag
 include $(base_dir)/Makefrag-jtag
@@ -23,8 +23,8 @@ include $(sim_dir)/Makefrag-verilator
 
 long_name = $(PROJECT).$(MODEL).$(CONFIG)
 
-rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
 rocketchip_csrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/csrc
+rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
 
 sim_vsrcs = \
 	$(build_dir)/$(long_name).v \
@@ -33,7 +33,7 @@ sim_vsrcs = \
 	$(testchip_vsrcs)
 
 sim_csrcs = \
-	$(sim_dir)/csrc/verilator-harness.cc \
+	$(abspath $(sim_dir))/csrc/verilator-harness.cc \
 	$(rocketchip_csrc_dir)/SimJTAG.cc \
 	$(rocketchip_csrc_dir)/SimDTM.cc \
 	$(rocketchip_csrc_dir)/remote_bitbang.cc \
@@ -76,6 +76,11 @@ $(output_dir)/%.out: $(output_dir)/% $(sim)
 $(output_dir)/%.run: $(output_dir)/% $(sim)
 	$(sim) +max-cycles=1000000 $< && touch $@
 
+$(output_dir)/%.fst: $(output_dir)/% $(sim_debug)
+	rm -f $@.vcd && mkfifo $@.vcd
+	vcd2fst -Z $@.vcd $@ &
+	$(sim_debug) -v$@.vcd +max-cycles=1000000 $<
+
 $(output_dir)/%.vpd: $(output_dir)/% $(sim_debug)
 	rm -f $@.vcd && mkfifo $@.vcd
 	vcd2vpd $@.vcd $@ > /dev/null &
@@ -85,7 +90,7 @@ run-regression-tests: $(addprefix $(output_dir)/,$(addsuffix .out,$(regression-t
 
 run-regression-tests-fast: $(addprefix $(output_dir)/,$(addsuffix .run,$(regression-tests)))
 
-run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .vpd,$(regression-tests)))
+run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .fst,$(regression-tests)))
 
 ifeq ($(PROJECT), examplefpga)
 run-jtag-dtm-tests-64: $(sim)

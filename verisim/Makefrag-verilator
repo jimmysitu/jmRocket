@@ -25,15 +25,16 @@ verilator/verilator-$(VERILATOR_VERSION).tar.gz:
 	wget http://www.veripool.org/ftp/verilator-$(VERILATOR_VERSION).tgz -O $@
 
 rocketchip_csrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/csrc
+rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
 
 # Run Verilator to produce a fast binary to emulate this circuit.
 VERILATOR := $(INSTALLED_VERILATOR) --cc --exe
-VERILATOR_THREADS ?= 2
+VERILATOR_THREADS ?= 1
 VERILATOR_FLAGS := --top-module $(MODEL) \
   +define+PRINTF_COND=\$$c\(\"verbose\",\"\&\&\"\,\"done_reset\"\) \
   +define+STOP_COND=\$$c\(\"done_reset\"\) --assert \
   --output-split 20000 \
   --threads $(VERILATOR_THREADS) \
 	-Wno-STMTDLY --x-assign unique \
-  -I$(base_dir)/testchipip/vsrc -I$(base_dir)/rocket-chip/vsrc \
+  -I$(base_dir)/testchipip/vsrc -I$(rocketchip_vsrc_dir) \
   -O3 -CFLAGS "$(CXXFLAGS) -DVERILATOR -include $(rocketchip_csrc_dir)/verilator.h"

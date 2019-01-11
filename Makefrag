@@ -17,7 +17,7 @@ $(FIRRTL_JAR): $(call lookup_scala_srcs, $(ROCKETCHIP_DIR)/firrtl/src/main/scala
 	cp -p $(ROCKETCHIP_DIR)/firrtl/utils/bin/firrtl.jar $@
 	touch $@
 
-build_dir=$(sim_dir)/generated-src
+build_dir=$(abspath $(sim_dir))/generated-src
 testchip_dir = $(base_dir)/testchipip
 
 include $(testchip_dir)/Makefrag
@@ -36,7 +36,8 @@ $(VERILOG_FILE): $(FIRRTL_FILE) $(ANNO_FILE) $(FIRRTL_JAR)
 	$(FIRRTL) -i $(FIRRTL_FILE) -o $(VERILOG_FILE) -X verilog -faf $(ANNO_FILE)
 
 regression-tests = \
-	rv64ud-v-fcvt \
+        rv64ui-p-add \
+	    rv64ud-v-fcvt \
         rv64ud-p-fdiv \
         rv64ud-v-fadd \
         rv64uf-v-fadd \

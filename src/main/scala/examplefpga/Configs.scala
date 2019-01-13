@@ -52,7 +52,11 @@ class With1Tiny64Core extends Config((site, here, up) => {
         useVM = false,
         fpu = None,
         mulDiv = Some(MulDivParams(mulUnroll = 8))),
-      btb = None,
+      btb = Some(BTBParams(
+        nEntries = 8,
+        nMatchBits = 14,
+        nRAS = 6,
+        bhtParams = Some(BHTParams(nEntries = 64)))),
       dcache = Some(DCacheParams(
         rowBits = site(SystemBusKey).beatBits,
         nSets = 256, // 16Kb scratchpad
@@ -78,7 +82,7 @@ class BaseExampleConfig extends Config(
   new freechips.rocketchip.system.DefaultConfig)
 
 class DefaultExampleConfig extends Config(
-  new WithJtagDTM ++
+  //new WithJtagDTM ++
   new WithExampleFPGASystem ++ new BaseExampleConfig)
 
 class BaseTiny64Config extends Config(

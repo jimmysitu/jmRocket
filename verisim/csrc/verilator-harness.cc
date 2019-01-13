@@ -64,7 +64,7 @@ int main(int argc, char** argv)
   int ret = 0;
   FILE *vcdfile = NULL;
   bool print_cycles = false;
-  // Port numbers are 16 bit unsigned integers. 
+  // Port numbers are 16 bit unsigned integers.
   uint16_t rbb_port = 0;
   char *new_argv[argc];
   int new_argc;
@@ -175,6 +175,7 @@ int main(int argc, char** argv)
   }
 
   if (jtag) delete jtag;
+  if (tsi) delete tsi;
   if (tile) delete tile;
 
   return ret;

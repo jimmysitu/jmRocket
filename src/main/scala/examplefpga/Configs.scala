@@ -45,7 +45,7 @@ class WithExampleFPGASystem extends Config((site, here, up) => {
     GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
 })
 
-class With1Tiny64Core extends Config((site, here, up) => {
+class With1Small64Core extends Config((site, here, up) => {
   case XLen => 64
   case RocketTilesKey => List(RocketTileParams(
       core = RocketCoreParams(
@@ -77,13 +77,45 @@ class With1Tiny64Core extends Config((site, here, up) => {
   ))
 })
 
+class With1Tiny64Core extends Config((site, here, up) => {
+  case XLen => 64
+  case RocketTilesKey => List(RocketTileParams(
+      core = RocketCoreParams(
+        useVM = false,
+        fpu = None,
+        mulDiv = Some(MulDivParams(mulUnroll = 8))),
+      btb = None,
+      dcache = Some(DCacheParams(
+        rowBits = site(SystemBusKey).beatBits,
+        nSets = 256, // 16Kb scratchpad
+        nWays = 1,
+        nTLBEntries = 4,
+        nMSHRs = 0,
+        blockBytes = site(CacheBlockBytes),
+        scratch = Some(0x80000000L))),
+      icache = Some(ICacheParams(
+        rowBits = site(SystemBusKey).beatBits,
+        nSets = 64,
+        nWays = 1,
+        nTLBEntries = 4,
+        blockBytes = site(CacheBlockBytes)))))
+  case RocketCrossingKey => List(RocketCrossingParams(
+    crossingType = SynchronousCrossing(),
+    master = TileMasterPortParams()
+  ))
+})
+
 class BaseExampleConfig extends Config(
   new WithBootROM ++
   new freechips.rocketchip.system.DefaultConfig)
 
-class DefaultExampleConfig extends Config(
-  //new WithJtagDTM ++
-  new WithExampleFPGASystem ++ new BaseExampleConfig)
+class BaseSmall64Config extends Config(
+  new WithBootROM ++
+  new WithNoMemPort ++
+  new WithNMemoryChannels(0) ++
+  new WithNBanks(0) ++
+  new With1Small64Core ++
+  new freechips.rocketchip.system.BaseConfig)
 
 class BaseTiny64Config extends Config(
   new WithBootROM ++
@@ -93,6 +125,12 @@ class BaseTiny64Config extends Config(
   new WithNBanks(0) ++
   new With1Tiny64Core ++
   new freechips.rocketchip.system.BaseConfig)
+
+class DefaultExampleConfig extends Config(
+  new WithExampleFPGASystem ++ new BaseExampleConfig)
+
+class Small64Config extends Config(
+  new WithExampleFPGASystem ++ new BaseSmall64Config)
 
 class Tiny64Config extends Config(
   new WithExampleFPGASystem ++ new BaseTiny64Config)
@@ -117,6 +155,10 @@ class WithExampleFPGAPlatform extends Config((site, here, up) => {
     GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
 })
 
+class Small64Platform extends Config(
+  new WithJtagDTM ++
+  new WithExampleFPGAPlatform ++ new BaseSmall64Config)
+
 class Tiny64Platform extends Config(
   new WithJtagDTM ++
   new WithExampleFPGAPlatform ++ new BaseTiny64Config)
@@ -140,6 +182,10 @@ class WithExampleFPGAChip extends Config((site, here, up) => {
     GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
     GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
 })
+
+class Small64Chip extends Config(
+  new WithJtagDTM ++
+  new WithExampleFPGAChip ++ new BaseSmall64Config)
 
 class Tiny64Chip extends Config(
   new WithJtagDTM ++

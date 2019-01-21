@@ -35,10 +35,10 @@ class ExampleFPGAChip(implicit p: Parameters) extends LazyModule {
   // SoC design
   val platform = LazyModule(new ExampleFPGAPlatform()(p))
 
-  override lazy val module = new LazyModuleImp(this) {
-//    val (core, _) = coreClock.in(0)
-//    childClock := core.clock
-//    childReset := core.reset
+  override lazy val module = new LazyRawModuleImp(this) {
+    val (core, _) = coreClock.in(0)
+    childClock := core.clock
+    childReset := core.reset
 
     jtag.get <> platform.module.io.jtag.get
     leds.get <>platform.module.io.leds

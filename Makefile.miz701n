@@ -7,7 +7,6 @@ PROJECT := examplefpga
 export CONFIG_PROJECT ?= $(PROJECT)
 export CONFIG ?= Tiny64Chip
 export BOARD ?= miz701n
-export BOOTROM_DIR ?= $(base_dir)/bootrom/xip
 
 rocketchip_dir := $(base_dir)/rocket-chip
 sifiveblocks_dir := $(base_dir)/sifive-blocks

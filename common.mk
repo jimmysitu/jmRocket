@@ -61,7 +61,7 @@ firrtl: $(firrtl)
 # Build .v
 verilog := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).v
 MEM_GEN ?= $(rocketchip_dir)/scripts/vlsi_mem_gen
-$(BUILD_DIR)/%.v: $(firrtl) $(FIRRTL_JAR)
+$(verilog): $(firrtl) $(FIRRTL_JAR)
 ifeq ($(FLOW_TYPE), ASIC)
 	$(FIRRTL) -i $(firrtl) -o $@ -X verilog --infer-rw $(MODEL) --repl-seq-mem -c:$(MODEL):-o:$(BUILD_DIR)/$*.conf -faf $(BUILD_DIR)/$*.anno.json -td $(BUILD_DIR)/
 	cd $(BUILD_DIR) && \

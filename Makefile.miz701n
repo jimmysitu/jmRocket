@@ -15,7 +15,6 @@ VSRCS := \
 	$(rocketchip_dir)/src/main/resources/vsrc/plusarg_reader.v \
 	$(sifiveblocks_dir)/vsrc/SRLatch.v \
 	$(FPGA_DIR)/common/vsrc/PowerOnResetFPGAOnly.v \
-	$(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).rom.v \
 	$(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).v
 
 include common.mk

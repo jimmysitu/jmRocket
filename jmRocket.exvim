@@ -17,7 +17,7 @@ folder_filter += macros,project,regression,riscv-tools,scripts,target,torture
 folder_filter += verilator-*,iverilog
 folder_filter += generated-src,builds -- It seem exvim has some issue for reading generated code
 file_filter += scala,cc,hh,c,h,v
-file_filter += mk,md
+file_filter += mk,md,tcl,xdc,sdc
 file_ignore_pattern += *.o,*.d
 
 -- Editing:

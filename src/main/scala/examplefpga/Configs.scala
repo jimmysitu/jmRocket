@@ -31,6 +31,9 @@ import ConfigValName._
 /**
  * System level Config
  */
+class WithJtagDTMSystem extends freechips.rocketchip.subsystem.WithJtagDTM
+class WithDebugSBASystem extends freechips.rocketchip.subsystem.WithDebugSBA
+
 class WithExampleFPGASystem extends Config((site, here, up) => {
   case BuildTop => (clock: Clock, reset: Bool, p: Parameters) => {
     Module(LazyModule(new ExampleFPGASystem()(p)).module)

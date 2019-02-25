@@ -2,10 +2,10 @@
 base_dir := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 BUILD_DIR := $(base_dir)/builds/asic
 FPGA_DIR := $(base_dir)/fpga-shells/xilinx
-MODEL := ExampleFPGAPlatform
+MODEL := ExampleFPGASystem
 PROJECT := examplefpga
 export CONFIG_PROJECT ?= $(PROJECT)
-export CONFIG ?= Small64Platform
+export CONFIG ?= WithJtagDTMSystem_Small64Config
 export BOARD ?= none
 
 rocketchip_dir := $(base_dir)/rocket-chip

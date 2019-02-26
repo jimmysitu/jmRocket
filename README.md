@@ -1,4 +1,4 @@
-# Jimmy's RISC-V Rocket Core Project
+# Jimmy's RISC-V Rocket Core Project [![Build Status](https://travis-ci.com/jimmysitu/jmRocket.svg?branch=master)](https://travis-ci.com/jimmysitu/jmRocket)
 
 This is a RISC-V project of Rocket Core
 

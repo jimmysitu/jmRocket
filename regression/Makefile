@@ -234,7 +234,7 @@ $(RISCV)/install_tests.stamp: | stamps/riscv-tools_checkout.stamp
 	date > $@
 
 # Builds the various simulators
-stamps/%/verisim-verilog.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
+stamps/%/verisim-verilog.stamp: stamps/other-submodules.stamp
 	mkdir -p $(dir $@)
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/verisim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) verilog
 	date > $@
@@ -249,7 +249,7 @@ stamps/%/verisim-debug.stamp: stamps/other-submodules.stamp $(RISCV)/install.sta
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/verisim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) debug
 	date > $@
 
-stamps/%/vsim-verilog.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
+stamps/%/vsim-verilog.stamp: stamps/other-submodules.stamp
 	mkdir -p $(dir $@)
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/vsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) verilog
 	date > $@
@@ -264,7 +264,7 @@ stamps/%/vsim-debug.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/vsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) debug
 	date > $@
 
-stamps/%/ivlsim-verilog.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
+stamps/%/ivlsim-verilog.stamp: stamps/other-submodules.stamp
 	mkdir -p $(dir $@)
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/ivlsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) verilog
 	date > $@

@@ -97,7 +97,7 @@ jobs:
         - travis_wait 20 make -f Makefile.asic verilog
     - <<: *test
       script:
-        # Complie for simulation
+        # Check RTL generation only
         - travis_wait 20 make -C regression SUITE=exampleA verisim-verilog
         - travis_wait 20 make -C regression SUITE=exampleA ivlsim-verilog
         - travis_wait 20 make -C regression SUITE=examplefpgaA verisim-verilog

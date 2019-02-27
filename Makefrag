@@ -70,9 +70,9 @@ $(output_dir)/%: $(RISCV)/riscv64-unknown-elf/share/riscv-tests/isa/%
 	ln -sf $< $@
 
 rvd-bmark-tests = \
-	mm.riscv \
-	spmv.riscv \
-	mt-vvadd.riscv
+#	mm.riscv \
+#	spmv.riscv \
+#	mt-vvadd.riscv
 
 $(addprefix $(output_dir)/, $(addsuffix .hex, $(rvd-bmark-tests))): $(output_dir)/%.hex: $(RISCV)/riscv64-unknown-elf/share/riscv-tests/benchmarks/%.hex
 	mkdir -p $(output_dir)
@@ -101,11 +101,11 @@ rvi-bmark-tests = \
 #	dhrystone.riscv \
 #	mt-matmul.riscv
 
-$(addprefix $(output_dir)/, $(addsuffix .hex, $(rvi-bmark-tests))): $(output_dir)/%.hex: $(RISCV)/riscv64-unknown-elf/share/riscv-tests/benchmarks/%.hex
+$(addprefix $(output_dir)/, $(addsuffix .hex, $(rvi-bmark-tests))): $(output_dir)/%.hex: $(RISCV)/target/share/riscv-tests/benchmarks/%.hex
 	mkdir -p $(output_dir)
 	ln -fs $< $@
 
-$(addprefix $(output_dir)/, $(rvi-bmark-tests)): $(output_dir)/%: $(RISCV)/riscv64-unknown-elf/share/riscv-tests/benchmarks/%
+$(addprefix $(output_dir)/, $(rvi-bmark-tests)): $(output_dir)/%: $(RISCV)/target/share/riscv-tests/benchmarks/%
 	mkdir -p $(output_dir)
 	ln -fs $< $@
 

@@ -1,4 +1,4 @@
-# Jimmy's RISC-V Rocket Core Project
+# Jimmy's RISC-V Rocket Core Project [![Build Status](https://travis-ci.com/jimmysitu/jmRocket.svg?branch=master)](https://travis-ci.com/jimmysitu/jmRocket)
 
 This is a RISC-V project of Rocket Core
 
@@ -9,7 +9,8 @@ This is a RISC-V project of Rocket Core
     * Overrride design function here
     * TestHarness takes this module as DUT, for verification test
   * Platform, which include all design IPs here, this platform can be reused by other ASIC/FPGA project
-    * New module of system
+    * New module of System
+    * AXI4 base IPs can be placed here
     * Tie off unused pins here
   * Chip, top level of an FPGA Chip, same board project can be reused
     * Connect FPGA shell resource to platform design here, e.g. reset, clock, pll etc.

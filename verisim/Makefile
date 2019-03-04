@@ -22,6 +22,9 @@ include $(base_dir)/Makefrag-jtag
 include $(sim_dir)/Makefrag-verilator
 
 long_name = $(PROJECT).$(MODEL).$(CONFIG)
+ifneq ($(filter run% %.run %.out %.vpd %.vcd,$(MAKECMDGOALS)),)
+-include $(build_dir)/$(long_name).d
+endif
 
 rocketchip_csrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/csrc
 rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
@@ -89,11 +92,13 @@ $(output_dir)/%.vpd: $(output_dir)/% $(sim_debug)
 	vcd2vpd $@.vcd $@ > /dev/null &
 	$(sim_debug) -v$@.vcd +max-cycles=1000000 $<
 
-run-regression-tests: $(addprefix $(output_dir)/,$(addsuffix .out,$(regression-tests)))
+run: run-asm-tests run-bmark-tests
+run-debug: run-asm-tests-debug run-bmark-tests-debug
+run-fast: run-asm-tests-fast run-bmark-tests-fast
 
-run-regression-tests-fast: $(addprefix $(output_dir)/,$(addsuffix .run,$(regression-tests)))
-
-run-regression-tests-debug: $(addprefix $(output_dir)/,$(addsuffix .fst,$(regression-tests)))
+.PHONY: run-asm-tests run-bmark-tests
+.PHONY: run-asm-tests-debug run-bmark-tests-debug
+.PHONY: run run-debug run-fast
 
 ifeq ($(PROJECT), examplefpga)
 run-jtag-dtm-tests-64: $(sim)

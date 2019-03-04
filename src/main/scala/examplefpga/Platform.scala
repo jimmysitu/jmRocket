@@ -34,7 +34,7 @@ class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
   val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
   val leds = Output(UInt(p(PeripheryGPIOKey)(1).width.W))
   val ints = Input(UInt(p(NExtTopInterrupts).W))
-  val jtag_reset = Input(Bool())
+  //val jtag_reset = Input(Bool())
 }
 
 // Example FPGA Platform
@@ -53,7 +53,8 @@ class ExampleFPGAPlatform(implicit p: Parameters) extends LazyModule {
     sys_jtag.jtag.TDI := io_jtag.jtag_TDI
     io_jtag.jtag_TDO := sys_jtag.jtag.TDO.data
 
-    sys_jtag.reset := io.jtag_reset
+    //sys_jtag.reset := io.jtag_reset
+    sys_jtag.reset := false.B
     sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
     
     // System Reset

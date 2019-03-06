@@ -98,9 +98,11 @@ jobs:
     - <<: *test
       script:
         # Check RTL generation only
-        - travis_wait 20 make -C regression SUITE=exampleA verisim-verilog
-        - travis_wait 20 make -C regression SUITE=exampleA ivlsim-verilog
-        - travis_wait 20 make -C regression SUITE=examplefpgaA verisim-verilog
-        - travis_wait 20 make -C regression SUITE=examplefpgaA ivlsim-verilog
-        - travis_wait 20 make -C regression SUITE=examplefpgaB verisim-verilog
-        - travis_wait 20 make -C regression SUITE=examplefpgaB ivlsim-verilog
+        - travis_wait 20 make -C regression SUITE=exampleA verisim-ndebug
+        - travis_wait 20 make -C regression SUITE=exampleA ivlsim-ndebug
+        - travis_wait 20 make -C regression SUITE=examplefpgaA verisim-ndebug
+        - travis_wait 20 make -C regression SUITE=examplefpgaA ivlsim-ndebug
+        - travis_wait 20 make -C regression SUITE=examplefpgaB verisim-ndebug
+        - travis_wait 20 make -C regression SUITE=examplefpgaB ivlsim-ndebug
+
+

@@ -117,6 +117,7 @@ verilator:
 iverilog:
 	$(MAKE) RISCV=$(RISCV) -C $(abspath $(TOP)/ivlsim) iverilog
 
+EMU_VERILOG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-verilog.stamp)
 EMU_DEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-debug.stamp)
 EMU_NDEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-ndebug.stamp)
 EMU_ASM_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-asm-tests.stamp)
@@ -124,6 +125,7 @@ EMU_BMARK_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-bmark
 EMU_REGRESSION_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-regression-tests.stamp)
 EMU_TORTURE_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/verisim-torture-$(TORTURE_CONFIG).stamp)
 
+verisim-verilog: $(EMU_VERILOG_STAMPS)
 verisim-debug: $(EMU_DEBUG_STAMPS)
 verisim-ndebug: $(EMU_NDEBUG_STAMPS)
 verisim-asm-tests: $(EMU_ASM_TEST_STAMPS)
@@ -131,6 +133,7 @@ verisim-bmark-tests: $(EMU_BMARK_TEST_STAMPS)
 verisim-regression-tests: $(EMU_REGRESSION_TEST_STAMPS)
 verisim-torture: $(EMU_TORTURE_STAMPS)
 
+VSIM_VERILOG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-verilog.stamp)
 VSIM_DEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-debug.stamp)
 VSIM_NDEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-ndebug.stamp)
 VSIM_ASM_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-asm-tests.stamp)
@@ -138,6 +141,7 @@ VSIM_BMARK_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-bmark-t
 VSIM_REGRESSION_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-regression-tests.stamp)
 VSIM_TORTURE_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/vsim-torture-$(TORTURE_CONFIG).stamp)
 
+vsim-verilog: $(VSIM_VERILOG_STAMPS)
 vsim-debug: $(VSIM_DEBUG_STAMPS)
 vsim-ndebug: $(VSIM_NDEBUG_STAMPS)
 vsim-asm-tests: $(VSIM_ASM_TEST_STAMPS)
@@ -145,6 +149,7 @@ vsim-bmark-tests: $(VSIM_BMARK_TEST_STAMPS)
 vsim-regression-tests: $(VSIM_REGRESSION_TEST_STAMPS)
 vsim-torture: $(VSIM_TORTURE_STAMPS)
 
+IVLSIM_VERILOG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-verilog.stamp)
 IVLSIM_DEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-debug.stamp)
 IVLSIM_NDEBUG_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-ndebug.stamp)
 IVLSIM_ASM_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-asm-tests.stamp)
@@ -152,6 +157,7 @@ IVLSIM_BMARK_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-bma
 IVLSIM_REGRESSION_TEST_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-regression-tests.stamp)
 IVLSIM_TORTURE_STAMPS=$(foreach config,$(CONFIGS),stamps/$(config)/ivlsim-torture-$(TORTURE_CONFIG).stamp)
 
+ivlsim-verilog: $(IVLSIM_VERILOG_STAMPS)
 ivlsim-debug: $(IVLSIM_DEBUG_STAMPS)
 ivlsim-ndebug: $(IVLSIM_NDEBUG_STAMPS)
 ivlsim-asm-tests: $(IVLSIM_ASM_TEST_STAMPS)
@@ -228,6 +234,11 @@ $(RISCV)/install_tests.stamp: | stamps/riscv-tools_checkout.stamp
 	date > $@
 
 # Builds the various simulators
+stamps/%/verisim-verilog.stamp:
+	mkdir -p $(dir $@)
+	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/verisim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV))
+	date > $@
+
 stamps/%/verisim-ndebug.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
 	mkdir -p $(dir $@)
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/verisim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV))
@@ -238,6 +249,11 @@ stamps/%/verisim-debug.stamp: stamps/other-submodules.stamp $(RISCV)/install.sta
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/verisim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) debug
 	date > $@
 
+stamps/%/vsim-verilog.stamp:
+	mkdir -p $(dir $@)
+	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/vsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV))
+	date > $@
+
 stamps/%/vsim-ndebug.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
 	mkdir -p $(dir $@)
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/vsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV))
@@ -246,6 +262,11 @@ stamps/%/vsim-ndebug.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
 stamps/%/vsim-debug.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp
 	mkdir -p $(dir $@)
 	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/vsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV)) debug
+	date > $@
+
+stamps/%/ivlsim-verilog.stamp:
+	mkdir -p $(dir $@)
+	+flock -x $(dir $@)/chisel-lock $(MAKE) -C $(abspath $(TOP))/ivlsim PROJECT=$(PROJECT) CONFIG=$* RISCV=$(abspath $(RISCV))
 	date > $@
 
 stamps/%/ivlsim-ndebug.stamp: stamps/other-submodules.stamp $(RISCV)/install.stamp

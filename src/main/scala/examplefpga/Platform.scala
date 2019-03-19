@@ -30,7 +30,7 @@ object PinGen {
 
 // Example FPGA Platform IO
 class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
-  val jtag = p(IncludeJtagDTM).option(new FPGAJTAGIO)
+  val jtag = p(ExportDebugJTAG).option(new FPGAJTAGIO)
   val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
   val leds = Output(UInt(p(PeripheryGPIOKey)(1).width.W))
   val ints = Input(UInt(p(NExtTopInterrupts).W))

@@ -1,7 +1,7 @@
 base_dir=$(abspath ..)
 sim_dir= .
 
-PROJECT ?= example
+PROJECT ?= examplefpga
 MODEL ?= TestHarness
 CONFIG ?= DefaultExampleConfig
 CFG_PROJECT ?= $(PROJECT)

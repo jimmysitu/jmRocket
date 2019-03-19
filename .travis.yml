@@ -47,6 +47,7 @@ addons:
 branches:
   only:
   - master
+  - rocketchip-bump
   - travis
 
 jobs:
@@ -98,9 +99,9 @@ jobs:
     - <<: *test
       script:
         # Check RTL generation only
-#        - travis_wait 20 make -C regression SUITE=examplefpgaA verisim-verilog
-#        - travis_wait 20 make -C regression SUITE=examplefpgaA ivlsim-verilog
-#        - travis_wait 20 make -C regression SUITE=examplefpgaB verisim-verilog
-#        - travis_wait 20 make -C regression SUITE=examplefpgaB ivlsim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaA verisim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaA ivlsim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaB verisim-verilog
+        - travis_wait 20 make -C regression SUITE=examplefpgaB ivlsim-verilog
 
 

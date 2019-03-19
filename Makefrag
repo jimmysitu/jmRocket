@@ -35,6 +35,8 @@ $(FIRRTL_FILE) $(ANNO_FILE): $(SCALA_SOURCES) $(bootrom_img) $(FIRRTL_JAR)
 $(VERILOG_FILE): $(FIRRTL_FILE) $(ANNO_FILE) $(FIRRTL_JAR)
 	$(FIRRTL) -i $(FIRRTL_FILE) -o $(VERILOG_FILE) -X verilog -faf $(ANNO_FILE)
 
+verilog: $(VERILOG_FILE)
+
 output_dir=$(sim_dir)/output
 
 $(output_dir)/%: $(RISCV)/riscv64-unknown-elf/share/riscv-tests/isa/%

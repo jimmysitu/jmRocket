@@ -41,7 +41,7 @@ class ExampleFPGAChip(implicit p: Parameters) extends LazyModule {
     childReset := core.reset
 
     jtag.get <> platform.module.io.jtag.get
-    leds.get <>platform.module.io.leds
+    leds.get <> platform.module.io.leds
     platform.module.io.btns <> btns.get
   }
 }

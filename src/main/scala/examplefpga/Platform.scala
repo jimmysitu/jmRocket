@@ -12,6 +12,7 @@ import testchipip._
 
 import sifive.blocks.devices.jtag._
 import sifive.blocks.devices.gpio._
+import sifive.blocks.devices.uart._
 import sifive.blocks.devices.pinctrl._
 
 import sifive.fpgashells.shell._
@@ -28,17 +29,18 @@ object PinGen {
   }
 }
 
+
 // Example FPGA Platform IO
 class ExampleFPGAPlatformIO(implicit val p: Parameters) extends Bundle {
   val jtag = p(ExportDebugJTAG).option(new FPGAJTAGIO)
   val btns = Input(UInt(p(PeripheryGPIOKey)(0).width.W))
   val leds = Output(UInt(p(PeripheryGPIOKey)(1).width.W))
   val ints = Input(UInt(p(NExtTopInterrupts).W))
-  //val jtag_reset = Input(Bool())
+  val uarts = Vec(p(PeripheryUARTKey).length, new UARTPortIO)
 }
 
 // Example FPGA Platform
-// buttons as input, leds as output, 1 jtag
+// buttons as input, leds as output, 1 jtag, 1 uart(rxd,txd)
 class ExampleFPGAPlatform(implicit p: Parameters) extends LazyModule {
   val sys = LazyModule(new ExampleFPGASystem()(p))
 
@@ -74,6 +76,14 @@ class ExampleFPGAPlatform(implicit p: Parameters) extends LazyModule {
 
     // Tie off no use inputs
     sys.module.gpio(1).pins.foreach { _.i.ival := false.B}
+
+    // UART
+    (io.uarts zip sys.module.uart).foreach {
+      case (io, p) => {
+        p.rxd := io.rxd
+        io.txd := p.txd
+      }
+    }
 
     // External Interrupt
     sys.module.interrupts := io.ints

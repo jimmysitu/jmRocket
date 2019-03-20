@@ -11,6 +11,7 @@ import freechips.rocketchip.devices.debug._
 import testchipip._
 
 import sifive.blocks.devices.gpio._
+import sifive.blocks.devices.uart._
 
 case object BuildTop extends Field[(Clock, Bool, Parameters) => ExampleFPGASystemModuleImp[ExampleFPGASystem]]
 
@@ -21,6 +22,7 @@ class ExampleFPGASystem(implicit p: Parameters) extends RocketSubsystem
     with HasPeripheryBootROM
     with HasSyncExtInterrupts
     with HasPeripheryGPIO
+    with HasPeripheryUART
     with HasPeripheryDebug {
 
   // Define or override periphery here, e.g.
@@ -56,6 +58,7 @@ class ExampleFPGASystemModuleImp[+L <: ExampleFPGASystem](_outer: L) extends Roc
     with HasPeripheryBootROMModuleImp
     with HasExtInterruptsModuleImp
     with HasPeripheryGPIOModuleImp
+    with HasPeripheryUARTModuleImp
     with HasPeripheryDebugModuleImp
     with DontTouch {
 

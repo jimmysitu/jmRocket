@@ -10,6 +10,7 @@ import freechips.rocketchip.util.DontTouch
 import testchipip._
 
 import sifive.blocks.devices.gpio._
+import sifive.blocks.devices.uart._
 
 import sifive.fpgashells.clocks._
 import sifive.fpgashells.shell._
@@ -27,13 +28,17 @@ class ExampleFPGAChip(implicit p: Parameters) extends LazyModule {
   val coreClock = ClockSinkNode(freqMHz = 50)
   coreClock := wrangler.node := coreGroup := corePLL := chipClock
 
+  // SoC design
+  val platform = LazyModule(new ExampleFPGAPlatform()(p))
+
   // Interface from FPGA shell
   val jtag = p(JTAGDebugOverlayKey).headOption.map(_(JTAGDebugOverlayParams()))
   val leds = p(LEDOverlayKey).headOption.map(_(LEDOverlayParams()))
   val btns = p(SwitchOverlayKey).headOption.map(_(SwitchOverlayParams()))
+ 
+  // One or more UARTs
+  val uarts = p(UARTPortOverlayKey).map(_(UARTPortOverlayParams()))
 
-  // SoC design
-  val platform = LazyModule(new ExampleFPGAPlatform()(p))
 
   override lazy val module = new LazyRawModuleImp(this) {
     val (core, _) = coreClock.in(0)
@@ -42,7 +47,10 @@ class ExampleFPGAChip(implicit p: Parameters) extends LazyModule {
 
     jtag.get <> platform.module.io.jtag.get
     leds.get <> platform.module.io.leds
-    platform.module.io.btns <> btns.get
+    btns.get <> platform.module.io.btns
+    (uarts zip platform.module.io.uarts).foreach {
+      case (u, p) => u <> p
+    }
   }
 }
 

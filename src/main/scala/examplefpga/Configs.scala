@@ -189,6 +189,8 @@ class WithExampleFPGAChip extends Config((site, here, up) => {
   case PeripheryGPIOKey => List(
     GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
     GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
+  case PeripheryUARTKey => List(
+    UARTParams(address = 0x10014000))
 })
 
 class Small64Chip extends Config(

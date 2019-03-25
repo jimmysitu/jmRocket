@@ -3,21 +3,21 @@
 This is a RISC-V project of Rocket Core
 
 ## Configures
-* Define design hierarchy
-  * System, extends RocketSubsystem, which include all SoC design.
-    * It should be ready reused by and other project base on rocket core(s)
-    * Overrride design function here
-    * TestHarness takes this module as DUT, for verification test
+* Define design hierarchy, for more design notes, please refer to Notes.md
+  * Shell, override shell function if FPAG board is reworked
+    - Usually extends a FPGA Shell directly
+    - Override some resource, e.g. add daughter board, reworked pin out etc.
+  * Chip, top level of an FPGA Chip, same board project can be reused
+    - Connect FPGA shell resource to platform design here, e.g. reset, clock, pll etc.
+    - Chip cannot generate RTL by itself since it depend on FPGA Shell resource
   * Platform, which include all design IPs here, this platform can be reused by other ASIC/FPGA project
     * New module of System
     * AXI4 base IPs can be placed here
     * Tie off unused pins here
-  * Chip, top level of an FPGA Chip, same board project can be reused
-    * Connect FPGA shell resource to platform design here, e.g. reset, clock, pll etc.
-    * Chip cannot generate RTL by itself since it depend on FPGA Shell resource
-  * Shell, override shell function if FPAG board is reworked
-    * Usually extends a FPGA Shell directly
-    * Override some resource, e.g. add daughter board, reworked pin out etc.
+  * System, extends RocketSubsystem, which include all SoC design.
+    - It should be ready reused by and other project base on rocket core(s)
+    - Overrride design function here
+    - TestHarness takes this module as DUT, for verification test
 
 ## FPGA Compose Flow
 * Default FPGA board

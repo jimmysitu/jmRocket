@@ -5,7 +5,7 @@ FPGA_DIR := $(base_dir)/fpga-shells/xilinx
 MODEL := ExampleFPGAPlatform
 PROJECT := examplefpga
 export CONFIG_PROJECT ?= $(PROJECT)
-export CONFIG ?= Tiny64Platform
+export CONFIG ?= Small64Platform
 export BOARD ?= default
 
 rocketchip_dir := $(base_dir)/rocket-chip
@@ -19,3 +19,9 @@ VSRCS := \
 	$(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).v
 
 include common.mk
+
+release: verilog
+	mkdir -p $(BUILD_DIR)/release
+	cp $(BUILD_DIR)/*.* $(BUILD_DIR)/release
+	cp $(VSRCS) $(BUILD_DIR)/release
+	tar -czf release_$(shell date +%H%M_%m%d%y).tgz -C $(BUILD_DIR)/release .

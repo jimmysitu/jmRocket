@@ -22,4 +22,7 @@ FLOW_TYPE := ASIC
 include common.mk
 
 release: verilog
+	mkdir -p $(BUILD_DIR)/release
+	cp $(BUILD_DIR)/*.* $(BUILD_DIR)/release
+	cp $(VSRCS) $(BUILD_DIR)/release
 	tar -czf release_$(shell date +%H%M_%m%d%y).tgz -C $(BUILD_DIR) .

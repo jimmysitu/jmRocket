@@ -58,7 +58,7 @@ class ExampleFPGAPlatform(implicit p: Parameters) extends LazyModule {
     //sys_jtag.reset := io.jtag_reset
     sys_jtag.reset := false.B
     sys_jtag.mfr_id := p(JtagDTMKey).idcodeManufId.U(11.W)
-    
+
     // System Reset
     sys.module.reset :=  reset.toBool | sys.module.debug.ndreset
 

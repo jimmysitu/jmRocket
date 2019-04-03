@@ -43,12 +43,15 @@ class WithExampleFPGASystem extends Config((site, here, up) => {
     idcodeVersion = 2,
     idcodePartNum = 0x000,
     idcodeManufId = 0x489,
-    debugIdleCycles = 5)
+    debugIdleCycles = 5
+  )
   case PeripheryGPIOKey => List(
     GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
-    GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
+    GPIOParams(address = 0x10013000, width = 2, includeIOF = false)
+  )
   case PeripheryUARTKey => List(
-    UARTParams(address = 0x10014000))
+    UARTParams(address = 0x10014000)
+  )
 })
 
 class With1Small64Core extends Config((site, here, up) => {
@@ -158,9 +161,11 @@ class WithExampleFPGAPlatform extends Config((site, here, up) => {
     debugIdleCycles = 5)
   case PeripheryGPIOKey => List(
     GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
-    GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
+    GPIOParams(address = 0x10013000, width = 2, includeIOF = false)
+  )
   case PeripheryUARTKey => List(
-    UARTParams(address = 0x10014000))
+    UARTParams(address = 0x10014000)
+  )
 })
 
 class Small64Platform extends Config(
@@ -188,9 +193,11 @@ class WithExampleFPGAChip extends Config((site, here, up) => {
     debugIdleCycles = 5)
   case PeripheryGPIOKey => List(
     GPIOParams(address = 0x10012000, width = 2, includeIOF = false),
-    GPIOParams(address = 0x10013000, width = 2, includeIOF = false))
+    GPIOParams(address = 0x10013000, width = 2, includeIOF = false)
+  )
   case PeripheryUARTKey => List(
-    UARTParams(address = 0x10014000))
+    UARTParams(address = 0x10014000)
+  )
 })
 
 class Small64Chip extends Config(

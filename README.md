@@ -7,7 +7,7 @@ This is a RISC-V project of Rocket Core
   * Shell, override shell function if FPAG board is reworked
     - Usually extends a FPGA Shell directly
     - Override some resource, e.g. add daughter board, reworked pin out etc.
-  * Chip, top level of an FPGA Chip, same board project can be reused
+  * Chip, top level of an FPGA chip, same board project can be reused
     - Connect FPGA shell resource to platform design here, e.g. reset, clock, pll etc.
     - Chip cannot generate RTL by itself since it depend on FPGA Shell resource
   * Platform, which include all design IPs here, this platform can be reused by other ASIC/FPGA project
@@ -16,7 +16,7 @@ This is a RISC-V project of Rocket Core
     * Tie off unused pins here
   * System, extends RocketSubsystem, which include all SoC design.
     - It should be ready reused by and other project base on rocket core(s)
-    - Overrride design function here
+    - Override design function here
     - TestHarness takes this module as DUT, for verification test
 
 ## FPGA Compose Flow
@@ -27,7 +27,7 @@ This is a RISC-V project of Rocket Core
     make -f Makefile.examplefpga verilog
     ```
 
-  * Clock, reset, pll may need to be done by manually FPGA flow
+  * Clock, reset, PLL may need to be done by manually FPGA flow
 
 * Miz701N
 

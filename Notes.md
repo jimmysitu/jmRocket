@@ -16,15 +16,39 @@ IO overlay should only care about the IO design, insert IO buffer, clock buffer 
 
 A **chip** is the top design of  an FPGA chip. Usually chip can be reused for project using the same shell.
 
-The chip connects FPGA shell resource to platform design here, e.g. reset, clock, pll etc.
+The chip connects FPGA shell resource to platform design here, e.g. reset, clock, PLL etc.
 
 - Chip cannot generate RTL by itself since it depend on FPGA Shell resource
 
 ## Platform.scala
 
+A **platform**, which include all design IPs here. A platform can be reused by other ASIC/FPGA project
 
+- New module of System
+- AXI4 base IPs can be placed here, such as co-processor, IO device
+- Tie off unused pins here
+
+An ASIC design take **platform** as the top of design
 
 ## System.scala
 
+System, extends RocketSubsystem, which include all Rocket SoC design. It could be ready reused by and other project base on rocket core(s).
+
+RocketSubsystem use tilelink as internal SoC bus. All tilelink base device should be instantiation here by adding nodes in design, override design function to implement special function for custom design.
+
+Attach tilelink device by using *with* key word such as
+
+```scala
+class ExampleSystem() extends RocketSubsystem with HasPeripheryGPIO
+```
+
+And parameter should include the PeripheryGPIOKey for GPIO device configuration. Leave this key empty if this device is not used.
+
+TestHarness takes this module as DUT, for verification test
+
 ## TestHarness.scala
 
+**TestHarness** is a testbench for **system** only. TestHarness is focus on rocket core verification. There are two kinds of test vector
+
+- RISC-V ISA compatibility test
+- Tilelink device test

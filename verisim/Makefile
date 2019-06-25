@@ -31,17 +31,18 @@ rocketchip_vsrc_dir = $(ROCKETCHIP_DIR)/src/main/resources/vsrc
 
 sim_vsrcs = \
 	$(build_dir)/$(long_name).v \
+	$(rocketchip_vsrc_dir)/SimDTM.v \
+	$(rocketchip_vsrc_dir)/SimJTAG.v \
 	$(rocketchip_vsrc_dir)/AsyncResetReg.v \
 	$(rocketchip_vsrc_dir)/plusarg_reader.v \
-	$(testchip_vsrcs)
+#	$(testchip_vsrcs)
 
 sim_csrcs = \
 	$(rocketchip_csrc_dir)/emulator.cc \
 	$(rocketchip_csrc_dir)/SimJTAG.cc \
 	$(rocketchip_csrc_dir)/SimDTM.cc \
 	$(rocketchip_csrc_dir)/remote_bitbang.cc \
-	$(testchip_csrcs)
-	#$(abspath $(sim_dir))/csrc/verilator-harness.cc \
+#	$(testchip_csrcs)
 
 model_dir = $(build_dir)/$(long_name)
 model_dir_debug = $(build_dir)/$(long_name).debug

@@ -34,9 +34,9 @@ An ASIC design take **platform** as the top of design
 
 System, extends RocketSubsystem, which include all Rocket SoC design. It could be ready reused by and other project base on rocket core(s).
 
-RocketSubsystem use tilelink as internal SoC bus. All tilelink base device should be instantiation here by adding nodes in design, override design function to implement special function for custom design.
+RocketSubsystem use Tilelink as internal SoC bus. All tilelink base device should be instantiation here by adding nodes in design, override design function to implement special function for custom design.
 
-Attach tilelink device by using *with* key word such as
+Attach Tilelink device by using *with* key word such as
 
 ```scala
 class ExampleSystem() extends RocketSubsystem with HasPeripheryGPIO

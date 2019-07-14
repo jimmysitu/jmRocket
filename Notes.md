@@ -46,9 +46,24 @@ And parameter should include the PeripheryGPIOKey for GPIO device configuration.
 
 TestHarness takes this module as DUT, for verification test
 
+For SoC system verification, just use command in verisim  directory
+
+```bash
+make PROJECT=examplefpga CONFIG=DefaultExampleConfig [target]
+```
+
+And verification with JTAG and gdb command in verisim directory
+
+```bash
+make PROJECT=examplefpga CONFIG=DefaultExampleConfig_WithJtagDTMSystem [target]
+```
+
+
+
 ## TestHarness.scala
 
-**TestHarness** is a testbench for **system** only. TestHarness is focus on rocket core verification. There are two kinds of test vector
+**TestHarness** is a testbench for **system** only. TestHarness is focus on rocket core verification. There are three kinds of test vector
 
 - RISC-V ISA compatibility test
 - Tilelink device test
+- JTAG, gdb test

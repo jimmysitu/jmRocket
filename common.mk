@@ -58,18 +58,18 @@ endif
 firrtl: $(firrtl)
 
 
-# Build .v
+# Build verilog
 verilog := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).v
 MEM_GEN ?= $(rocketchip_dir)/scripts/vlsi_mem_gen
 $(verilog): $(firrtl) $(FIRRTL_JAR)
 
-%.v:
+$(verilog):
 ifeq ($(FLOW_TYPE), ASIC)
-	$(FIRRTL) -i $(firrtl) -o $@ -X verilog --infer-rw $(MODEL) --repl-seq-mem -c:$(MODEL):-o:$*.conf -faf $*.anno.json -td $(BUILD_DIR)/
+	$(FIRRTL) -i $(firrtl) -o $@ -X verilog --infer-rw $(MODEL) --repl-seq-mem -c:$(MODEL):-o:$(verilog:.v=.conf) -faf $(verilog:.v=.anno.json) -td $(BUILD_DIR)/
 	cd $(BUILD_DIR) && \
 	rm -f $*.behav_srams.v && \
-	$(MEM_GEN) $*.conf >> $*.tmp && \
-	mv $*.tmp $*.behav_srams.v
+	$(MEM_GEN) $(verilog:.v=.conf) >> $(verilog:.v=.tmp) && \
+	mv $(verilog:.v=.tmp) $(verilog:.v=.behav_srams.v)
 else
 	$(FIRRTL) -i $(firrtl) -o $@ -X verilog
 endif
@@ -80,6 +80,7 @@ endif
 .PHONY: verilog
 verilog: $(verilog)
 
+# Generate bootrom
 romgen := $(BUILD_DIR)/$(PROJECT).$(MODEL).$(CONFIG).rom.v
 $(romgen): $(verilog)
 ifneq ($(BOOTROM_DIR),"")

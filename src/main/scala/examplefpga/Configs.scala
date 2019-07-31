@@ -168,6 +168,15 @@ class WithExampleFPGAPlatform extends Config((site, here, up) => {
   )
 })
 
+class Default64Platform32 extends Config(
+  new WithJtagDTM ++
+  new WithEdgeDataBits(32) ++
+  new WithExampleFPGAPlatform ++ new BaseSmall64Config)
+
+class Default64Platform extends Config(
+  new WithJtagDTM ++
+  new WithExampleFPGAPlatform ++ new BaseSmall64Config)
+
 class Small64Platform extends Config(
   new WithJtagDTM ++
   new WithExampleFPGAPlatform ++ new BaseSmall64Config)
@@ -199,6 +208,11 @@ class WithExampleFPGAChip extends Config((site, here, up) => {
     UARTParams(address = 0x10014000)
   )
 })
+
+class Default64Chip extends Config(
+  new WithJtagDTM ++
+  new WithEdgeDataBits(32) ++
+  new WithExampleFPGAChip ++ new BaseSmall64Config)
 
 class Small64Chip extends Config(
   new WithJtagDTM ++

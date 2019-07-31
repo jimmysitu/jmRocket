@@ -1,4 +1,6 @@
-# Jimmy's RISC-V Rocket Core Project [![Build Status](https://travis-ci.com/jimmysitu/jmRocket.svg?branch=master)](https://travis-ci.com/jimmysitu/jmRocket)
+# Jimmy's RISC-V Rocket Core Project
+
+ [![Build Status](https://travis-ci.com/jimmysitu/jmRocket.svg?branch=master)](https://travis-ci.com/jimmysitu/jmRocket)
 
 This is a RISC-V project of Rocket Core
 
@@ -42,7 +44,7 @@ This is a RISC-V project of Rocket Core
 ## FPGA Compose Flow
 
 * Default FPGA board
-  * Generate FPGA RTL for a common FPGA chip by
+  * Generate FPGA RTL for a common FPGA platform by
 
     ```bash
     make -f Makefile.examplefpga verilog

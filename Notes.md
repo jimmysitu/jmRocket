@@ -28,7 +28,7 @@ A **platform**, which include all design IPs here. A platform can be reused by o
 - AXI4 base IPs can be placed here, such as co-processor, IO device
 - Tie off unused pins here
 
-An ASIC design take **platform** as the top of design
+An ASIC design can also take **platform** as the top of design
 
 ## System.scala
 
@@ -58,7 +58,7 @@ And verification with JTAG and gdb command in verisim directory
 make PROJECT=examplefpga CONFIG=DefaultExampleConfig_WithJtagDTMSystem [target]
 ```
 
-
+An ASIC design can also take **system** as the top of IP in an ASIC project
 
 ## TestHarness.scala
 

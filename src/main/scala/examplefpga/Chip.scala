@@ -28,6 +28,7 @@ class ExampleFPGAChip(implicit p: Parameters) extends LazyModule {
   val coreClock = ClockSinkNode(freqMHz = 50)
   coreClock := wrangler.node := coreGroup := corePLL := chipClock
 
+  // TODO: Add PS7 interface from FPGA shell here
   // SoC design
   val platform = LazyModule(new ExampleFPGAPlatform()(p))
 

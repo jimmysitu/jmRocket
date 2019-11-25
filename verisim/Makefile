@@ -102,6 +102,10 @@ run-fast: run-asm-tests-fast run-bmark-tests-fast
 .PHONY: run run-debug run-fast
 
 ifeq ($(PROJECT), examplefpga)
+GDBSERVER = $(abspath $(base_dir)/tests/examplefpga-gdbserver.py) \
+	    --print-failures \
+	    --print-log-names
+
 run-jtag-dtm-tests-64: $(sim)
 	RISCV=$(RISCV) $(GDBSERVER) \
 	--sim_cmd="$(sim) $(JTAG_DTM_SIM_ARGS) dummybin" \

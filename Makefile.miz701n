@@ -5,7 +5,7 @@ FPGA_DIR := $(base_dir)/fpga-shells/xilinx
 MODEL := ExampleFPGAShell
 PROJECT := examplefpga
 export CONFIG_PROJECT ?= $(PROJECT)
-export CONFIG ?= Tiny64Chip
+export CONFIG ?= Default64Chip
 export BOARD ?= miz701n
 
 rocketchip_dir := $(base_dir)/rocket-chip

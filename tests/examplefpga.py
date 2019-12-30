@@ -8,6 +8,7 @@ class examplefpgaHart(targets.Hart):
     ram = 0x80000000
     ram_size = 0x4000
     instruction_hardware_breakpoint_count = 2
+    misa = 0x800000000014112d
     pass
 
 class examplefpga(targets.Target):
@@ -16,7 +17,12 @@ class examplefpga(targets.Target):
     server_timeout_sec = 60*60
     openocd_config_path = "examplefpga.cfg"
 
+    # For OpenOCD
+    openocd_config = "examplefpga.cfg"
+    ram = 0x80000000
+    ram_size = 0x4000
+
     def create(self):
-        print "STARTING A SIMULATION"
-        print self.sim_cmd
+        print("STARTING A SIMULATION")
+        print(self.sim_cmd)
         return testlib.VcsSim(sim_cmd=self.sim_cmd, debug=False)

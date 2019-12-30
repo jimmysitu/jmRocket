@@ -229,10 +229,10 @@ class Openocd(object):
             # Disable tcl and telnet servers, since they are unused and because
             # the port numbers will conflict if multiple OpenOCD processes are
             # running on the same server.
-            "--command",
-            "tcl_port disabled",
-            "--command",
-            "telnet_port disabled",
+            #"--command",
+            #"tcl_port disabled",
+            #"--command",
+            #"telnet_port disabled",
         ]
 
         if config:
@@ -286,6 +286,9 @@ class Openocd(object):
                 if "telnet server disabled" in line:
                     return process
 
+                if "4444 for telnet connections" in line:
+                    return process
+
                 if not messaged and time.time() - start > 1:
                     messaged = True
                     print "Waiting for OpenOCD to start..."
@@ -314,6 +317,7 @@ class OpenocdCli(object):
     def __init__(self, port=4444):
         self.child = pexpect.spawn(
                 "sh -c 'telnet localhost %d | tee openocd-cli.log'" % port)
+        self.child.expect("Trying 127.0.0.1...")
         self.child.expect("> ")
 
     def command(self, cmd):

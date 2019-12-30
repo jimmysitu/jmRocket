@@ -1191,6 +1191,8 @@ class PrivChange(PrivTest):
 
 class GdbCommand(GdbTest):
     def test(self):
+        # Sleep for a while so command can be easily seen
+        time.sleep(10)
         self.gdb.command('set *((int*)0x80000000)=0x01')
 
 parsed = None

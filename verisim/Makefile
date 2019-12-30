@@ -106,8 +106,13 @@ GDBSERVER = $(abspath $(base_dir)/tests/examplefpga-gdbserver.py) \
 	    --print-failures \
 	    --print-log-names
 
+OCDSERVER = $(abspath $(base_dir)/tests/examplefpga-openocd.py) \
+	    --print-failures \
+	    --print-log-names
+
+SERVER = $(OCDSERVER)
 run-jtag-dtm-tests-64: $(sim)
-	RISCV=$(RISCV) $(GDBSERVER) \
+	RISCV=$(RISCV) $(SERVER) \
 	--sim_cmd="$(sim) $(JTAG_DTM_SIM_ARGS) dummybin" \
 	--server_cmd="$(RISCV)/bin/openocd \
 	-s $(RISCV)/share/openocd/scripts" \
@@ -116,8 +121,8 @@ run-jtag-dtm-tests-64: $(sim)
 	$(JTAG_DTM_TEST)
 
 run-jtag-dtm-tests-64-debug: $(sim_debug)
-	RISCV=$(RISCV) $(GDBSERVER) \
-	--sim_cmd="$(sim_debug) $(JTAG_DTM_SIM_ARGS) $(VERISIM_JTAG_VCDPLUS_64) dummybin" \
+	RISCV=$(RISCV) $(SERVER) \
+	--sim_cmd="$(sim_debug) $(JTAG_DTM_SIM_ARGS) $(VERISIM_JTAG_VCDPLUS_64) +verbose dummybin" \
 	--server_cmd="$(RISCV)/bin/openocd $(OPENOCD_DEBUG) \
 	-s $(RISCV)/share/openocd/scripts" \
 	--64 \
